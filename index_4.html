@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="dark">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Frank Myonk - art direction, Warsaw. Portfolio.">
+<title>Myonk Portfolio v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Commissioner:wght@200;300;400;500&family=Oswald:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#101010;
+    --ink:#FFFFFF;
+    --mid:#A2A29D;
+    --soft:#7D7D78;
+    --rule:#262624;
+    --tile:#1C1C1B;
+  }
+
+  *{box-sizing:border-box}
+  .display{font-family:"Bebas Neue",Oswald,"Arial Narrow",sans-serif;font-weight:400}
+
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:Commissioner,"Helvetica Neue",Arial,sans-serif;
+    font-weight:300;
+    font-size:15px;
+    line-height:1.6;
+    margin:0;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .shell{
+    display:grid;
+    grid-template-columns:200px minmax(0,1fr);
+    gap:72px;
+    max-width:1240px;
+    margin:0 auto;
+    padding-inline:28px;
+    padding-block:0 96px;
+  }
+
+  .masthead{
+    max-width:1240px;
+    margin:0 auto;
+    padding-inline:28px;
+    padding-block:64px 44px;
+  }
+  .wordmark{
+    font-family:"Bebas Neue",Oswald,"Arial Narrow",sans-serif;
+    font-size:clamp(46px,7.5vw,86px);
+    font-weight:400;
+    letter-spacing:.055em;
+    line-height:.9;
+    color:var(--ink);
+    margin:0 0 10px;
+  }
+  .tagline{
+    font-size:12px;
+    font-weight:300;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--soft);
+    margin:0;
+    line-height:1.6;
+  }
+
+  .side{
+    position:sticky;
+    top:env(safe-area-inset-top,0px);
+    align-self:start;
+    padding-block:4px 24px;
+    max-height:100vh;
+    overflow-y:auto;
+  }
+  .nav{list-style:none;margin:0 0 40px;padding:0}
+  .nav a{
+    display:block;
+    font-size:13.5px;
+    font-weight:300;
+    color:var(--mid);
+    text-decoration:none;
+    padding:5px 0;
+    transition:color .18s;
+  }
+  .nav a:hover{color:var(--ink)}
+  .nav a:focus-visible{outline:1px solid var(--ink);outline-offset:3px}
+
+  .axis{display:flex;flex-direction:column;gap:2px;margin-bottom:34px}
+  .axis-label{
+    font-size:10.5px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--soft);
+    margin-bottom:6px;
+  }
+  .axis-btn{
+    font-family:inherit;
+    font-size:13px;
+    font-weight:300;
+    background:none;
+    border:0;
+    padding:2px 0;
+    text-align:left;
+    color:var(--soft);
+    cursor:pointer;
+    transition:color .18s;
+  }
+  .axis-btn:hover{color:var(--mid)}
+  .axis-btn[aria-pressed="true"]{color:var(--ink);font-weight:400}
+  .axis-btn:focus-visible{outline:1px solid var(--ink);outline-offset:3px}
+
+  .main{padding-block:0;min-width:0}
+
+  .group{margin-bottom:76px;scroll-margin-top:24px}
+  .group-title{
+    font-family:"Bebas Neue",Oswald,"Arial Narrow",sans-serif;
+    font-size:19px;
+    font-weight:400;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--mid);
+    margin:0 0 20px;
+    padding-bottom:10px;
+    border-bottom:1px solid var(--rule);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:52px 30px;
+  }
+  .card{display:flex;flex-direction:column;min-width:0}
+  .tile{
+    aspect-ratio:4/3;
+    max-width:100%;
+    background:var(--tile);
+    margin-bottom:14px;
+  }
+  .card-title{
+    font-family:"Bebas Neue",Oswald,"Arial Narrow",sans-serif;
+    font-size:20px;
+    font-weight:400;
+    letter-spacing:.045em;
+    color:var(--ink);
+    line-height:1.15;
+    margin:0;
+    text-wrap:balance;
+  }
+  .card-gloss{
+    display:block;
+    font-family:Commissioner,"Helvetica Neue",Arial,sans-serif;
+    font-size:13px;
+    font-weight:300;
+    letter-spacing:0;
+    text-transform:none;
+    color:var(--mid);
+    margin-top:2px;
+  }
+  .meta{
+    font-size:12px;
+    font-weight:300;
+    color:var(--soft);
+    margin:4px 0 0;
+    line-height:1.5;
+  }
+  .role{
+    font-size:11.5px;
+    font-weight:300;
+    color:var(--soft);
+    margin:3px 0 0;
+    opacity:0;
+    transition:opacity .2s;
+  }
+  .card:hover .role,.card:focus-within .role{opacity:1}
+
+  .about{
+    border-top:1px solid var(--rule);
+    padding-top:36px;
+    display:grid;
+    grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);
+    gap:56px;
+  }
+  .about h2{
+    font-family:"Bebas Neue",Oswald,"Arial Narrow",sans-serif;
+    font-size:19px;
+    font-weight:400;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--mid);
+    margin:0 0 16px;
+  }
+  .about p{margin:0 0 14px;max-width:56ch;font-size:14.5px;line-height:1.7}
+  .clients{list-style:none;margin:0;padding:0;font-size:13px;font-weight:300;color:var(--mid);line-height:2.1}
+
+  @media (max-width:900px){
+    .shell{grid-template-columns:1fr;gap:0;padding-block:0 64px}
+    .side{position:static;max-height:none;padding-block:0}
+    .masthead{padding-block:44px 28px}
+    .nav{display:flex;flex-wrap:wrap;gap:0 24px;margin-bottom:26px}
+    .axis{flex-direction:row;align-items:baseline;gap:20px;flex-wrap:wrap;margin-bottom:26px}
+    .axis-label{margin:0}
+    .main{padding-block:0}
+    .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 22px}
+    .role{opacity:1}
+    .about{grid-template-columns:1fr;gap:32px}
+  }
+  @media (max-width:520px){
+    .grid{grid-template-columns:1fr;gap:40px}
+    .group{margin-bottom:56px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style>
+  html{-webkit-text-size-adjust:100%;background:#101010}
+  img{max-width:100%;height:auto}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <h1 class="wordmark">Frank Myonk</h1>
+  <p class="tagline">Art direction · Warsaw · PL / BG / EN</p>
+</header>
+
+<div class="shell">
+  <aside class="side">
+
+    <div class="axis">
+      <span class="axis-label">Structure</span>
+      <button class="axis-btn" id="btn-role" aria-pressed="true">By role</button>
+      <button class="axis-btn" id="btn-client" aria-pressed="false">By client type</button>
+    </div>
+
+    <ul class="nav" id="nav"></ul>
+
+  </aside>
+
+  <main class="main">
+    <div id="groups"></div>
+
+    <section class="about">
+      <div>
+        <h2>About</h2>
+        <p>Работя между полски и български институции — визуална комуникация от концепция до печат, на полски, български и английски. Трийсет години през журналистика, предпечат, аудио-визуална продукция и документално кино.</p>
+      </div>
+      <div>
+        <h2>Clients</h2>
+        <ul class="clients">
+          <li>Bulgarian Cultural Institute, Warsaw</li>
+          <li>Baldinini Warszawa</li>
+          <li>Bulgarian Drama &amp; Film Academy</li>
+          <li>EPSU</li>
+          <li>Malga Kubiak</li>
+          <li>Sarakina Balkan Band</li>
+          <li>Innova · PROM.bg · Platinum Active</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function(){
+  var P = [
+    {t:"Śnił mi się…", g:"exhibition posters", c:"Bulgarian Cultural Institute, Warsaw", y:"2025", r:"Art direction, typography", R:"direction", C:"institutions"},
+    {t:"Bulgarian Institute Posters", g:null, c:"Bulgarian Cultural Institute, Warsaw", y:"2021", r:"Art direction, typography, prepress", R:"direction", C:"institutions"},
+    {t:"Posters — BKI Warszawa", g:null, c:"Bulgarian Cultural Institute, Warsaw", y:"2018", r:"Art direction, typography", R:"direction", C:"institutions"},
+    {t:"A Month with the Bulgarian Drama & Film Academy", g:null, c:"Bulgarian Cultural Institute, Warsaw", y:"2021", r:"Art direction, print", R:"direction", C:"institutions"},
+    {t:"Дунав на Висла", g:"Danube on Vistula", c:"Bulgarian Cultural Institute, Warsaw", y:"2019", r:"Art direction, typography, prepress", R:"direction", C:"institutions"},
+    {t:"MAITREYA — klub dyskusyjny", g:null, c:"", y:"2020", r:"Art direction", R:"direction", C:"institutions"},
+    {t:"Baldinini Warszawa — Covers", g:null, c:"Baldinini", y:"2025", r:"Art direction, production", R:"direction", C:"retail"},
+    {t:"Baldinini Warszawa — Instagram", g:null, c:"Baldinini", y:"2020", r:"Art direction, production", R:"direction", C:"retail"},
+    {t:"Baldinini Warszawa — Black Friday", g:null, c:"Baldinini", y:"2021", r:"Art direction, production", R:"direction", C:"retail"},
+
+    {t:"Bulgarian Cultural Institute Warsaw", g:"visual identity", c:"Bulgarian Cultural Institute, Warsaw", y:"2020", r:"Identity design, guidelines", R:"identity", C:"institutions"},
+    {t:"platinumactive.pl", g:null, c:"Platinum Active", y:"", r:"Identity design", R:"identity", C:"retail"},
+    {t:"PROM.bg", g:null, c:"PROM", y:"", r:"Identity design", R:"identity", C:"retail"},
+    {t:"Innova", g:null, c:"Innova", y:"", r:"Identity design", R:"identity", C:"retail"},
+    {t:"Sarakina Balkan Band", g:null, c:"Sarakina Balkan Band", y:"", r:"Identity design", R:"identity", C:"music"},
+    {t:"CLCE", g:null, c:"", y:"", r:"Identity design", R:"identity", C:"retail"},
+    {t:"CLCE2", g:null, c:"", y:"", r:"Identity design", R:"identity", C:"retail"},
+
+    {t:"Calendar: 70 Years of BKI Warsaw", g:null, c:"Bulgarian Cultural Institute, Warsaw", y:"2021", r:"Art direction, typography, prepress", R:"print", C:"institutions"},
+    {t:"BKI Warsaw Calendar 2018", g:null, c:"Bulgarian Cultural Institute, Warsaw", y:"2018", r:"Art direction, typography, prepress", R:"print", C:"institutions"},
+    {t:"Kalendarze z ikonami", g:"Icon calendars", c:"", y:"2017", r:"Art direction, prepress", R:"print", C:"institutions"},
+    {t:"Corporate brochure", g:null, c:"", y:"2026", r:"Art direction, typography, prepress", R:"print", C:"retail"},
+    {t:"Volunteers brochure", g:null, c:"", y:"2021", r:"Art direction, typography, prepress", R:"print", C:"retail"},
+    {t:"OMS", g:"Malga Kubiak", c:"Malga Kubiak", y:"", r:"Design, typography, prepress", R:"print", C:"publishing"},
+    {t:"CIRCLE", g:null, c:"", y:"", r:"Cover design", R:"print", C:"music"},
+    {t:"ТОРТА / CAKE", g:null, c:"", y:"", r:"Cover design", R:"print", C:"music"},
+    {t:"Имам си такава Държава", g:null, c:"", y:"", r:"Cover design", R:"print", C:"music"},
+
+    {t:"Zrozumieć depresję", g:"Understanding Depression", c:"", y:"2020", r:"Direction, camera, edit", R:"film", C:"film"},
+    {t:"Majka — opowieść podróżnika", g:"MAYKA — A Traveller's Tale", c:"", y:"2021", r:"Direction, camera, edit", R:"film", C:"film"},
+    {t:"Szybkie metamorfozy", g:null, c:"", y:"", r:"Direction, production", R:"film", C:"film"},
+    {t:"EPSU", g:"video project", c:"EPSU", y:"", r:"Direction, production", R:"film", C:"film"}
+  ];
+
+  var AXES = {
+    role:{
+      key:"R",
+      order:["direction","identity","print","film"],
+      labels:{direction:"Art direction & campaigns",identity:"Identity & logos",print:"Publications & print",film:"Film & motion"}
+    },
+    client:{
+      key:"C",
+      order:["institutions","retail","publishing","music","film"],
+      labels:{institutions:"Cultural institutions",retail:"Brand & retail",publishing:"Publishing",music:"Music",film:"Film & video"}
+    }
+  };
+
+
+
+
+  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+  function card(p,i){
+    var gloss = p.g ? '<span class="card-gloss">'+esc(p.g)+'</span>' : '';
+    var bits = [];
+    if(p.c && p.c.toLowerCase() !== p.t.toLowerCase()) bits.push(esc(p.c));
+    if(p.y) bits.push(esc(p.y));
+    var meta = bits.length ? '<p class="meta">'+bits.join(" · ")+'</p>' : '';
+    return '<article class="card" tabindex="0">'
+      + '<div class="tile"></div>'
+      + '<h3 class="card-title">'+esc(p.t)+gloss+'</h3>'
+      + meta
+      + '<p class="role">'+esc(p.r)+'</p>'
+      + '</article>';
+  }
+
+  function render(name){
+    var axis = AXES[name], g = "", n = "", i = 0;
+    axis.order.forEach(function(k){
+      var items = P.filter(function(p){return p[axis.key] === k;});
+      if(!items.length) return;
+      var id = "g-"+name+"-"+k;
+      n += '<li><a href="#'+id+'">'+esc(axis.labels[k])+'</a></li>';
+      g += '<section class="group" id="'+id+'">'
+         + '<h2 class="group-title">'+esc(axis.labels[k])+'</h2>'
+         + '<div class="grid">'+items.map(function(p){return card(p,i++);}).join("")+'</div>'
+         + '</section>';
+    });
+    document.getElementById("groups").innerHTML = g;
+    document.getElementById("nav").innerHTML = n;
+    document.getElementById("btn-role").setAttribute("aria-pressed", name==="role");
+    document.getElementById("btn-client").setAttribute("aria-pressed", name==="client");
+  }
+
+  document.getElementById("btn-role").addEventListener("click",function(){render("role");});
+  document.getElementById("btn-client").addEventListener("click",function(){render("client");});
+  render("role");
+})();
+</script>
+</body>
+</html>
