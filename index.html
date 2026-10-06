@@ -331,7 +331,21 @@
   .gallery .wide{grid-column:1/-1}
   .gallery .half{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}
   .gallery .half img{max-height:100%;width:auto;object-fit:contain}
-  .gallery .wide img{width:100%}
+  .gallery .half video{display:block;width:100%;height:100%;object-fit:contain}
+  .gallery .wide img,.gallery .wide video{width:100%;height:auto;display:block}
+  .gallery .crop{position:relative;overflow:hidden}
+  .crop .frame{position:absolute;outline:2px solid var(--ink);box-shadow:0 0 0 200vmax rgba(10,10,10,.6)}
+  .crop .frame span{
+    position:absolute;
+    left:0;
+    bottom:100%;
+    margin-bottom:8px;
+    font-size:11px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    white-space:nowrap;
+    color:var(--ink);
+  }
 
   .next{
     display:block;
@@ -467,7 +481,7 @@
      r:"Direction, production",
      d:"A first-person account by Karol, addicted to opiates. With Karol Marzec, Agata Stola and Dr Eryk Matuszkiewicz. English subtitles."},
     {id:"cake", t:"Торта / Cake", g:"Album packaging", c:"Deyan Angeloff", y:"2026", cat:"music",
-     r:"Art direction, key visual, cover design", img:["cake-1","cake-2","cake-3","cake-4"],
+     r:"Art direction, key visual, cover design", img:[{src:"cake-hero", crop:[0.2438,0.1844,0.4979,0.7469], label:"Cover crop 1:1"},"cake-1","cake-2","cake-3","cake-4"],
      d:"Key visual and CD packaging for Deyan Angeloff's album: a portrait with a chocolate cake on the cover, a disc and inlay with gilded ornament, and a back cover listing seventeen tracks."},
     {id:"post-covid", t:"The Post-Covid Transformations", g:"In the live performance and audiovisual sectors", c:"UNI Europa · Progressive Policies", y:"2025", cat:"pub",
      r:"Art direction, cover design", img:[],
@@ -482,11 +496,11 @@
      r:"Editorial design, maps, data visualisation", img:[],
      d:"Final report of the FLY SUS project on the European civil aeronautics supply chain: cover, layout, maps and charts."},
     {id:"baldinini", t:"Baldinini Warszawa", g:"Seasonal social media", c:"Baldinini", y:"2019–2025", cat:"campaign",
-     r:"Art direction, design, production", img:["baldinini-1","baldinini-2","baldinini-3","baldinini-4","baldinini-5","baldinini-6","baldinini-7"],
+     r:"Art direction, design, production", img:["baldinini-3","baldinini-2","baldinini-4","baldinini-5","baldinini-1","baldinini-6","baldinini-7"],
      d:"Campaign visuals for the Baldinini store in Warsaw: seasonal sales, carnival and winter promotions, Facebook covers and Instagram grids."},
     {id:"my-splendid-fatherland", t:"Имам си прекрасна държава", g:"My Splendid Fatherland — album packaging", c:"Deyan Angeloff", y:"", cat:"music",
-     r:"Art direction, cover design", img:["fatherland-1","fatherland-2","fatherland-3"],
-     d:"CD packaging for Deyan Angeloff (Деян Неделчев): portrait cover, disc and booklet set against a graffiti pattern in the colours of the Bulgarian flag."},
+     r:"Art direction, cover design", img:[{video:"fatherland-making-of", w:1080, h:1080},"fatherland-cover","fatherland-1","fatherland-2","fatherland-3"],
+     d:"CD packaging for Deyan Angeloff (Деян Неделчев): portrait cover, disc and booklet set against a graffiti pattern in the colours of the Bulgarian flag. The making-of follows the process from the photo shoot through the graffiti background and layout iterations to the final portrait cover."},
     {id:"poland-love-and-hatred", t:"Poland — Love and Hatred", g:"Polska — miłość i nienawiść", y:"2020", cat:"film", v:"WPbNq-amfQY", len:"39 min",
      r:"Direction, production",
      d:"Polish people believe their country is tolerant of other ethnic groups, religions and sexual orientations. The film sets that belief against the testimony of LGBT+ activists and clergy."},
@@ -503,7 +517,7 @@
   var HERO = {"circle":"circle","shaping-genai":"genai","cake":"cake","post-covid":"postcovid","songs":"songs","fly-sus":"flysus",
               "baldinini":"baldinini","my-splendid-fatherland":"fatherland","capacity-building":"capacity"};
 
-  var DIM = {"baldinini-1":[1800,1285],"baldinini-2":[1400,1400],"baldinini-3":[845,1400],"baldinini-4":[1400,1400],"baldinini-5":[1400,1400],"baldinini-6":[1139,500],"baldinini-7":[1800,666],"baldinini-hero":[2000,1125],"cake-1":[1536,1024],"cake-2":[1536,1024],"cake-3":[1536,1024],"cake-4":[1536,1024],"cake-hero":[2000,1333],"capacity-1":[1800,1200],"capacity-hero":[2000,1333],"circle-1":[1536,1024],"circle-2":[1536,1024],"circle-3":[1536,1024],"circle-hero":[1536,1024],"depresja-1":[1120,1600],"depresja-2":[1400,1400],"depresja-3":[1400,1400],"depresja-4":[1400,1400],"fatherland-1":[1536,1024],"fatherland-2":[1536,1024],"fatherland-3":[1536,1024],"fatherland-hero":[1536,1024],"flysus-hero":[1672,941],"genai-1":[1800,1004],"genai-2":[1800,1200],"genai-hero":[2000,1333],"postcovid-hero":[2055,1000],"songs-1":[693,984],"songs-2":[693,984],"songs-3":[693,984],"songs-4":[693,984],"songs-hero":[1697,954]};
+  var DIM = {"baldinini-1":[1800,1285],"baldinini-2":[1400,1400],"baldinini-3":[845,1400],"baldinini-4":[1400,1400],"baldinini-5":[1400,1400],"baldinini-6":[1139,500],"baldinini-7":[1800,666],"baldinini-hero":[2000,1125],"cake-1":[1536,1024],"cake-2":[1536,1024],"cake-3":[1536,1024],"cake-4":[1536,1024],"cake-hero":[2000,1333],"capacity-1":[1800,1200],"capacity-hero":[2000,1333],"circle-1":[1536,1024],"circle-2":[1536,1024],"circle-3":[1536,1024],"circle-hero":[1536,1024],"depresja-1":[1120,1600],"depresja-2":[1400,1400],"depresja-3":[1400,1400],"depresja-4":[1400,1400],"fatherland-1":[1536,1024],"fatherland-2":[1536,1024],"fatherland-3":[1536,1024],"fatherland-cover":[1400,1400],"fatherland-hero":[1536,1024],"flysus-hero":[1672,941],"genai-1":[1800,1004],"genai-2":[1800,1200],"genai-hero":[2000,1333],"postcovid-hero":[2055,1000],"songs-1":[693,984],"songs-2":[693,984],"songs-3":[693,984],"songs-4":[693,984],"songs-hero":[1697,954]};
 
   function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
   /* Cyrillic runs get lang="bg" so Akrobat switches to its Bulgarian letterforms (locl BGR) */
@@ -588,6 +602,15 @@
   var dlg = document.getElementById("project"), body = document.getElementById("p-body"), openIdx = -1, pushed = false;
 
   function figure(name){
+    if(typeof name === "object" && name.video){
+      return '<figure class="'+(name.w/name.h >= 1.25 ? 'wide' : 'half')+'"><video src="img/'+name.video+'.mp4" poster="img/'+name.video+'.jpg" width="'+name.w+'" height="'+name.h+'"'
+        + (reduce ? ' controls' : ' autoplay loop') + ' muted playsinline preload="metadata"></video></figure>';
+    }
+    if(typeof name === "object" && name.crop){
+      var c = name.crop, dc = DIM[name.src] || [1600,1067];
+      return '<figure class="wide crop"><img src="img/'+name.src+'.jpg" width="'+dc[0]+'" height="'+dc[1]+'" alt="" loading="lazy" decoding="async">'
+        + '<span class="frame" style="left:'+c[0]*100+'%;top:'+c[1]*100+'%;width:'+c[2]*100+'%;height:'+c[3]*100+'%"><span>'+esc(name.label)+'</span></span></figure>';
+    }
     var d = DIM[name] || [1600,1067], wide = d[0]/d[1] >= 1.25;
     return '<figure class="'+(wide?'wide':'half')+'"><img src="img/'+name+'.jpg" width="'+d[0]+'" height="'+d[1]+'" alt="" loading="lazy" decoding="async"></figure>';
   }
