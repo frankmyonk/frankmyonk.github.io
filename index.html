@@ -142,6 +142,75 @@
     background:var(--tile);
     margin-bottom:14px;
   }
+  .tile--video{
+    position:relative;
+    display:block;
+    width:100%;
+    aspect-ratio:16/9;
+    padding:0;
+    border:0;
+    overflow:hidden;
+    cursor:pointer;
+  }
+  .tile--video img{
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    opacity:.82;
+    transition:opacity .2s;
+  }
+  .tile--video:hover img,.tile--video:focus-visible img{opacity:1}
+  .tile--video:focus-visible{outline:1px solid var(--ink);outline-offset:3px}
+  .play{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:52px;
+    height:52px;
+    margin:-26px 0 0 -26px;
+    border-radius:50%;
+    background:rgba(16,16,16,.6);
+    border:1px solid rgba(255,255,255,.55);
+  }
+  .play::after{
+    content:"";
+    position:absolute;
+    left:21px;
+    top:17px;
+    border-style:solid;
+    border-width:9px 0 9px 14px;
+    border-color:transparent transparent transparent var(--ink);
+  }
+
+  .player{
+    width:min(1100px,94vw);
+    max-width:none;
+    padding:0;
+    border:0;
+    background:transparent;
+    overflow:visible;
+  }
+  .player::backdrop{background:rgba(0,0,0,.9)}
+  .player-frame{aspect-ratio:16/9;background:#000}
+  .player-frame iframe{display:block;width:100%;height:100%;border:0}
+  .player-close{
+    display:block;
+    margin:0 0 10px auto;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:300;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--mid);
+    background:none;
+    border:0;
+    padding:6px 0;
+    cursor:pointer;
+  }
+  .player-close:hover{color:var(--ink)}
+  .player-close:focus-visible{outline:1px solid var(--ink);outline-offset:3px}
+
   .card-title{
     font-family:"Bebas Neue",Oswald,"Arial Narrow",sans-serif;
     font-size:20px;
@@ -265,6 +334,11 @@
   </main>
 </div>
 
+<dialog class="player" id="player" aria-label="Video player">
+  <button type="button" class="player-close" id="player-close">Close</button>
+  <div class="player-frame" id="player-frame"></div>
+</dialog>
+
 <script>
 (function(){
   var P = [
@@ -296,17 +370,17 @@
     {t:"ТОРТА / CAKE", g:null, c:"", y:"", r:"Cover design", R:"print", C:"music"},
     {t:"Имам си такава Държава", g:null, c:"", y:"", r:"Cover design", R:"print", C:"music"},
 
-    {t:"Zrozumieć depresję", g:"Understanding Depression", c:"", y:"2020", r:"Direction, camera, edit", R:"film", C:"film"},
-    {t:"Majka — opowieść podróżnika", g:"MAYKA — A Traveller's Tale", c:"", y:"2021", r:"Direction, camera, edit", R:"film", C:"film"},
-    {t:"Szybkie metamorfozy", g:null, c:"", y:"", r:"Direction, production", R:"film", C:"film"},
-    {t:"EPSU", g:"video project", c:"EPSU", y:"", r:"Direction, production", R:"film", C:"film"}
+    {t:"Majka — opowieść podróżnika", g:"MAYKA — A Traveller's Tale", c:"", y:"2022", d:"48 min", v:"2ajk1ooY1no", r:"Direction, production", R:"film", C:"film"},
+    {t:"Poland — Love and Hatred", g:"Polska — miłość i nienawiść", c:"", y:"2020", d:"39 min", v:"WPbNq-amfQY", r:"Direction, production", R:"film", C:"film"},
+    {t:"Zrozumieć depresję", g:"Understanding Depression", c:"", y:"2020", d:"50 min", v:"5wgUc1i6QQM", r:"Direction, production", R:"film", C:"film"},
+    {t:"HIV po polsku", g:"HIV in Polish", c:"", y:"2017", d:"67 min", v:"SlJDxYzejUY", r:"Direction, production", R:"film", C:"film"}
   ];
 
   var AXES = {
     role:{
       key:"R",
       order:["direction","identity","print","film"],
-      labels:{direction:"Art direction & campaigns",identity:"Identity & logos",print:"Publications & print",film:"Film & motion"}
+      labels:{direction:"Art direction & campaigns",identity:"Identity & logos",print:"Publications & print",film:"Documentary film"}
     },
     client:{
       key:"C",
@@ -325,9 +399,15 @@
     var bits = [];
     if(p.c && p.c.toLowerCase() !== p.t.toLowerCase()) bits.push(esc(p.c));
     if(p.y) bits.push(esc(p.y));
+    if(p.d) bits.push(esc(p.d));
     var meta = bits.length ? '<p class="meta">'+bits.join(" · ")+'</p>' : '';
-    return '<article class="card" tabindex="0">'
-      + '<div class="tile"></div>'
+    var tile = p.v
+      ? '<button type="button" class="tile tile--video" data-v="'+esc(p.v)+'" aria-label="Play: '+esc(p.t)+'">'
+        + '<img src="https://i.ytimg.com/vi/'+esc(p.v)+'/maxresdefault.jpg" alt="" loading="lazy">'
+        + '<span class="play" aria-hidden="true"></span></button>'
+      : '<div class="tile"></div>';
+    return '<article class="card"'+(p.v ? '' : ' tabindex="0"')+'>'
+      + tile
       + '<h3 class="card-title">'+esc(p.t)+gloss+'</h3>'
       + meta
       + '<p class="role">'+esc(p.r)+'</p>'
@@ -351,6 +431,19 @@
     document.getElementById("btn-role").setAttribute("aria-pressed", name==="role");
     document.getElementById("btn-client").setAttribute("aria-pressed", name==="client");
   }
+
+  var player = document.getElementById("player");
+  var frame = document.getElementById("player-frame");
+  document.getElementById("groups").addEventListener("click",function(e){
+    var b = e.target.closest(".tile--video");
+    if(!b) return;
+    frame.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/'+b.dataset.v+'?autoplay=1&rel=0" title="'+esc(b.getAttribute("aria-label"))+'"'
+      + ' allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
+    player.showModal();
+  });
+  document.getElementById("player-close").addEventListener("click",function(){player.close();});
+  player.addEventListener("click",function(e){if(e.target === player) player.close();});
+  player.addEventListener("close",function(){frame.innerHTML = "";});
 
   document.getElementById("btn-role").addEventListener("click",function(){render("role");});
   document.getElementById("btn-client").addEventListener("click",function(){render("client");});
