@@ -1,5 +1,6 @@
 /* CD jewel case in CSS 3D: front, back, open box, disc. Drag, slider, buttons and arrow keys.
-   cfg = {front:"circle-hero", inner:"circle-1", rear:"circle-3"} -> img/<name>.jpg (mockup photos, cropped in viewers.css) */
+   cfg = {front:"circle-hero", inner:"circle-1", rear:"circle-3"} -> img/<name>.jpg (mockup photos, cropped in viewers.css)
+   or  cfg = {dir:"img/cd/cake/"} -> flat print textures front, inside, tray, rear, spine, disc .jpg */
 
 var LABELS = {front:"Front cover", back:"Back of the case", open:"Open case with disc", disc:"Disc"};
 var VIEWS = Object.keys(LABELS);
@@ -7,10 +8,14 @@ var VIEWS = Object.keys(LABELS);
 export function mount(hero, cfg, opt){
   opt = opt || {};
   /* absolute URL: a relative url() inside a custom property would resolve against css/ */
-  function url(n){ return "url('" + new URL("img/" + n + ".jpg", document.baseURI).href + "')"; }
+  function abs(path){ return "url('" + new URL(path, document.baseURI).href + "')"; }
+  function url(n){ return abs("img/" + n + ".jpg"); }
+  var vars = cfg.dir
+    ? ["front","inside","tray","rear","spine","disc"].map(function(k){ return "--f-" + k + ":" + abs(cfg.dir + k + ".jpg"); }).join(";")
+    : "--hero:" + url(cfg.front) + ";--inner:" + url(cfg.inner) + ";--rear:" + url(cfg.rear);
   hero.classList.add("p-hero--cd");
   hero.innerHTML =
-      '<div class="cd-view" data-view="front" style="--hero:' + url(cfg.front) + ';--inner:' + url(cfg.inner) + ';--rear:' + url(cfg.rear) + '">'
+      '<div class="cd-view' + (cfg.dir ? ' cd-flat' : '') + '" data-view="front" style="' + vars + '">'
     +  '<div class="cd-stage" tabindex="0" role="img" aria-label="' + esc(opt.title || "CD") + ': rotating model of the CD case. Drag or use the arrow keys to turn it.">'
     +   '<div class="shadow"></div>'
     +   '<div class="origin"><div class="assembly">'
