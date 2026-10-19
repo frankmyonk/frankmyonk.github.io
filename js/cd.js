@@ -37,8 +37,8 @@ export function mount(hero, cfg, opt){
   var view = "front", yaw = -16, tilt = 10, drag = null;
 
   function size(){
-    var max = view === "open" ? 670 : 410;
-    var s = Math.min(view === "open" ? 1 : 1.07, (stage.clientWidth - 32) / max, (stage.clientHeight - 40) / 330);
+    var max = view === "open" ? 660 : 380;
+    var s = Math.min(view === "open" ? 1.5 : 1.6, (stage.clientWidth - 24) / max, (stage.clientHeight - 40) / 330);
     root.style.setProperty("--scale", Math.max(.35, s));
     root.style.setProperty("--center", view === "open" ? "139px" : "0px");
   }
