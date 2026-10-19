@@ -206,6 +206,7 @@
   .card-img{position:relative;aspect-ratio:3/2;overflow:hidden;background:var(--panel);margin-bottom:16px;padding:5% 7%}
   .card-img img{width:100%;height:100%;object-fit:contain;transition:transform .8s cubic-bezier(.2,.7,.2,1),opacity .4s}
   .card:hover .card-img img{transform:scale(1.035)}
+  /* The tile module adds a contained tabletop scene without changing card geometry. */
   .badge{
     position:absolute;
     left:14px;
@@ -476,7 +477,7 @@
   var P = [
     {id:"circle", t:"Circle", g:"Album packaging", c:"Deyan Angeloff & Frank Myonk", y:"2026", cat:"music",
      view:"cd", cd:{front:"circle-hero", inner:"circle-1", rear:"circle-3"},
-     r:"Art direction, cover design, photography", img:["circle-1","circle-2","circle-3"],
+     r:"Art direction, cover design, photography", img:[],
      d:"CD packaging for the joint album of Deyan Angeloff and Frank Myonk: cover, disc, booklet and back inlay with fourteen tracks. Frank Myonk also wrote the lyrics and handled audio engineering."},
     {id:"shaping-genai", t:"Shaping GenAI", g:"For a sustainable and fair services economy", c:"UNI Europa", y:"2025", cat:"pub",
      r:"Editorial design, cover, infographics, prepress", img:["genai-1","genai-2"],
@@ -493,7 +494,7 @@
      d:"A first-person account by Karol, addicted to opiates. With Karol Marzec, Agata Stola and Dr Eryk Matuszkiewicz. English subtitles."},
     {id:"cake", t:"Торта / Cake", g:"Album packaging", c:"Deyan Angeloff", y:"2026", cat:"music",
      view:"cd", cd:{front:"cake-1", inner:"cake-2", rear:"cake-3"},
-     r:"Art direction, key visual, cover design", img:[{src:"cake-hero", crop:[0.2438,0.1844,0.4979,0.7469], label:"Cover crop 1:1"},"cake-1","cake-2","cake-3","cake-4"],
+     r:"Art direction, key visual, cover design", img:[],
      d:"Key visual and CD packaging for Deyan Angeloff's album: a portrait with a chocolate cake on the cover, a disc and inlay with gilded ornament, and a back cover listing seventeen tracks."},
     {id:"post-covid", t:"The Post-Covid Transformations", g:"In the live performance and audiovisual sectors", c:"UNI Europa · Progressive Policies", y:"2025", cat:"pub",
      r:"Art direction, cover design", img:[],
@@ -512,7 +513,7 @@
      d:"Campaign visuals for the Baldinini store in Warsaw: seasonal sales, carnival and winter promotions, Facebook covers and Instagram grids."},
     {id:"my-splendid-fatherland", t:"Имам си прекрасна държава", g:"My Splendid Fatherland — album packaging", c:"Deyan Angeloff", y:"", cat:"music",
      view:"cd", cd:{front:"fatherland-hero", inner:"fatherland-1", rear:"fatherland-3"},
-     r:"Art direction, cover design", img:[{video:"fatherland-making-of", w:1080, h:1080},"fatherland-cover","fatherland-1","fatherland-2","fatherland-3"],
+     r:"Art direction, cover design", img:[{video:"fatherland-making-of", w:1080, h:1080}],
      d:"CD packaging for Deyan Angeloff (Деян Неделчев): portrait cover, disc and booklet set against a graffiti pattern in the colours of the Bulgarian flag. The making-of follows the process from the photo shoot through the graffiti background and layout iterations to the final portrait cover."},
     {id:"poland-love-and-hatred", t:"Poland — Love and Hatred", g:"Polska — miłość i nienawiść", y:"2020", cat:"film", v:"WPbNq-amfQY", len:"39 min",
      r:"Direction, production",
@@ -731,5 +732,6 @@
   route();
 })();
 </script>
+<script type="module" src="js/tiles.js"></script>
 </body>
 </html>
