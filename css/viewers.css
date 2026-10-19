@@ -1,7 +1,7 @@
 /* Interactive project viewers (loaded with index.html, used only by projects with p.view) */
 
 /* ---------- brochure ---------- */
-.p-hero--book{
+.p-hero.p-hero--book{
   height:auto;
   padding:clamp(28px,6vh,72px) var(--gutter) clamp(20px,4vh,40px);
   background:radial-gradient(120% 90% at 50% 42%,#242422 0%,#181817 58%,#121211 100%);
@@ -68,7 +68,7 @@
 
 /* ---------- CD jewel case (CSS 3D; geometry and crops adapted from the Codex prototype) ---------- */
 .cd-view { --plastic:#737981; --edge:#d6d8dd; --shade:#00000099; --clear-tint:#dbe8f409; --clear-highlight:#e5f2ff52; --clear-edge:#e5efff99; --clear-shadow:#00000035; color:var(--ink); }
-.cd-view .cd-stage {height:clamp(320px,min(80vh,100vw),860px);position:relative;perspective:1500px;touch-action:pan-y;cursor:grab;user-select:none;overflow:hidden;}
+.cd-view .cd-stage {height:clamp(320px,min(calc(100vh - 280px),100vw),860px);position:relative;perspective:1500px;touch-action:pan-y;cursor:grab;user-select:none;overflow:hidden;}
 .cd-view .cd-stage:active {cursor:grabbing;}
 .cd-view .shadow {position:absolute;left:23%;right:23%;top:76%;height:24px;border-radius:50%;background:var(--shade);filter:blur(20px);opacity:.45;transition:all .8s ease;}
 .cd-view .origin {position:absolute;width:344px;height:302px;left:50%;top:49%;transform:translate(-50%,-50%) scale(var(--scale,1));transform-style:preserve-3d;transition:transform .8s ease;}
@@ -125,7 +125,7 @@
 .cd-view[data-view="disc"] .base,.cd-view[data-view="disc"] .lid {opacity:0;pointer-events:none;}
 .cd-view[data-view="disc"] .disc {transform:translateX(-13px) translateZ(30px) scale(1.1);}
 @media(prefers-reduced-motion:reduce) {.cd-view * {transition:none!important;}}
-.p-hero--cd{height:auto;padding:clamp(20px,4vh,48px) var(--gutter) clamp(20px,4vh,40px);background:radial-gradient(120% 90% at 50% 42%,#242422 0%,#181817 58%,#121211 100%)}
+.p-hero.p-hero--cd{height:auto;padding:clamp(20px,4vh,48px) var(--gutter) clamp(20px,4vh,40px);background:radial-gradient(120% 90% at 50% 42%,#242422 0%,#181817 58%,#121211 100%)}
 .cd-ui{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:clamp(12px,3vw,32px);margin-top:clamp(10px,2vh,20px)}
 .cd-ui button{background:none;border:0;padding:10px 0;cursor:pointer;font:inherit;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--mid);transition:color .2s}
 .cd-ui button:hover,.cd-ui button[aria-pressed="true"]{color:var(--ink)}
