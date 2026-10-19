@@ -1,5 +1,5 @@
 /* Brochure viewer: StPageFlip (HTML mode) with prev/next buttons, keyboard and a static fallback.
-   cfg = {dir:"img/book/<slug>/", n:24, w:1200, h:1697}  -> files 00.jpg … (n-1).jpg, first = front cover, last = back cover */
+   cfg = {dir:"img/book/<slug>/", n:24, w:1200, h:1697, sample:"20 of 97 pages" (optional label)}  -> files 00.jpg … (n-1).jpg, first = front cover, last = back cover */
 import {PageFlip} from "../vendor/page-flip/page-flip.module.js";
 
 var AHEAD = 6;
@@ -16,6 +16,7 @@ export function mount(hero, cfg, opt){
     +   '<div class="book-frame" style="--ar:' + ar + '">'
     +     '<div class="book-shadow"></div><div class="book"></div><div class="book-spine"></div>'
     +   '</div>'
+    +   (cfg.sample ? '<span class="book-sample">Sample · ' + esc(cfg.sample) + '</span>' : '')
     +   '<div class="book-ui">'
     +     '<button type="button" class="book-prev">← Prev page</button>'
     +     '<span class="book-count" aria-live="polite"></span>'
