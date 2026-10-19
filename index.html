@@ -15,6 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Commissioner:wght@200;300;400;500&display=swap">
+<link rel="stylesheet" href="css/viewers.css">
 <link rel="preload" href="fonts/akrobat-bold.otf" as="font" type="font/otf" crossorigin>
 
 <style>
@@ -474,6 +475,7 @@
 
   var P = [
     {id:"circle", t:"Circle", g:"Album packaging", c:"Deyan Angeloff & Frank Myonk", y:"2026", cat:"music",
+     view:"cd", cd:{front:"circle-hero", inner:"circle-1", rear:"circle-3"},
      r:"Art direction, cover design, photography", img:["circle-1","circle-2","circle-3"],
      d:"CD packaging for the joint album of Deyan Angeloff and Frank Myonk: cover, disc, booklet and back inlay with fourteen tracks. Frank Myonk also wrote the lyrics and handled audio engineering."},
     {id:"shaping-genai", t:"Shaping GenAI", g:"For a sustainable and fair services economy", c:"UNI Europa", y:"2025", cat:"pub",
@@ -483,12 +485,14 @@
      r:"Web design, key visual, icons", img:["prevodach-1","prevodach-2"],
      d:"Website for the НОВ ВЕК translation agency: ordering translations and the legalisation of legal, medical and academic documents, in Bulgarian, English and Russian. Tablet and smartphone layouts built around a key visual of faces painted in national flags."},
     {id:"osobiste-mnw", t:"Osobiste MNW", g:"Mozaika wspomnień — A Mosaic of Memories", c:"Muzeum Narodowe w Warszawie", y:"2021", cat:"pub",
+     view:"book", book:{dir:"img/book/osobiste-mnw/", n:24, w:1200, h:1697},
      r:"Editorial design, cover, layout", img:["mnw-1","mnw-2","mnw-3","mnw-4"],
      d:"Brochure for Osobiste MNW, a project run since 2018 by volunteers of the National Museum in Warsaw that collects visitors' and staff members' personal memories of the museum. 24 pages in A5, each story set beside a work from the collection or an archival photograph in a circular frame."},
     {id:"majka", t:"Majka", g:"Świadectwo uzależnienia — Testimony of Addiction", y:"2022", cat:"film", v:"2ajk1ooY1no", len:"48 min",
      r:"Direction, production",
      d:"A first-person account by Karol, addicted to opiates. With Karol Marzec, Agata Stola and Dr Eryk Matuszkiewicz. English subtitles."},
     {id:"cake", t:"Торта / Cake", g:"Album packaging", c:"Deyan Angeloff", y:"2026", cat:"music",
+     view:"cd", cd:{front:"cake-1", inner:"cake-2", rear:"cake-3"},
      r:"Art direction, key visual, cover design", img:[{src:"cake-hero", crop:[0.2438,0.1844,0.4979,0.7469], label:"Cover crop 1:1"},"cake-1","cake-2","cake-3","cake-4"],
      d:"Key visual and CD packaging for Deyan Angeloff's album: a portrait with a chocolate cake on the cover, a disc and inlay with gilded ornament, and a back cover listing seventeen tracks."},
     {id:"post-covid", t:"The Post-Covid Transformations", g:"In the live performance and audiovisual sectors", c:"UNI Europa · Progressive Policies", y:"2025", cat:"pub",
@@ -507,6 +511,7 @@
      r:"Art direction, design, production", img:["baldinini-3","baldinini-2","baldinini-4","baldinini-5","baldinini-1","baldinini-6","baldinini-7"],
      d:"Campaign visuals for the Baldinini store in Warsaw: seasonal sales, carnival and winter promotions, Facebook covers and Instagram grids."},
     {id:"my-splendid-fatherland", t:"Имам си прекрасна държава", g:"My Splendid Fatherland — album packaging", c:"Deyan Angeloff", y:"", cat:"music",
+     view:"cd", cd:{front:"fatherland-hero", inner:"fatherland-1", rear:"fatherland-3"},
      r:"Art direction, cover design", img:[{video:"fatherland-making-of", w:1080, h:1080},"fatherland-cover","fatherland-1","fatherland-2","fatherland-3"],
      d:"CD packaging for Deyan Angeloff (Деян Неделчев): portrait cover, disc and booklet set against a graffiti pattern in the colours of the Bulgarian flag. The making-of follows the process from the photo shoot through the graffiti background and layout iterations to the final portrait cover."},
     {id:"poland-love-and-hatred", t:"Poland — Love and Hatred", g:"Polska — miłość i nienawiść", y:"2020", cat:"film", v:"WPbNq-amfQY", len:"39 min",
@@ -661,6 +666,20 @@
     });
     document.title = p.t + " — Frank Myonk";
     dlg.scrollTop = 0;
+    mountView(p);
+  }
+
+  /* interactive viewers (js/<view>.js), loaded on demand; the hero image stays if loading fails */
+  var view = null, viewToken = 0;
+  function unmountView(){ viewToken++; if(view){ view.destroy(); view = null; } }
+  function mountView(p){
+    unmountView();
+    if(!p.view) return;
+    var token = viewToken, el = body.querySelector(".p-hero");
+    import("./js/"+p.view+".js").then(function(m){
+      if(token !== viewToken || !el.isConnected) return;
+      view = m.mount(el, p[p.view], {reduce:reduce, title:p.t});
+    }).catch(function(err){ console.warn("viewer", err); });
   }
 
   function route(){
@@ -684,6 +703,7 @@
   }
 
   dlg.addEventListener("close",function(){
+    unmountView();
     body.innerHTML = "";
     openIdx = -1;
     document.documentElement.style.overflow = "";
@@ -696,7 +716,7 @@
   document.getElementById("p-prev").addEventListener("click",function(){goTo(openIdx-1);});
   document.getElementById("p-next").addEventListener("click",function(){goTo(openIdx+1);});
   dlg.addEventListener("keydown",function(e){
-    if(e.target.closest("iframe,input,textarea")) return;
+    if(e.target.closest("iframe,input,textarea,.book-view,.cd-view")) return;
     if(e.key === "ArrowRight") goTo(openIdx+1);
     if(e.key === "ArrowLeft") goTo(openIdx-1);
   });
