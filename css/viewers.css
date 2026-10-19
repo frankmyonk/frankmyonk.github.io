@@ -156,3 +156,13 @@
 @media (prefers-reduced-motion:reduce){
   .tile-scene,.tile-object-layer,.tile-shadow-layer{transition:none!important;transform:none!important;}
 }
+
+/* flat print textures (cfg.dir): whole files, no mockup crops */
+.cd-view.cd-flat .front-art{background-image:var(--f-front)}
+.cd-view.cd-flat .inside-art{background-image:var(--f-inside)}
+.cd-view.cd-flat .tray-art{background-image:var(--f-tray)}
+.cd-view.cd-flat .rear-art{background-image:var(--f-rear)}
+.cd-view.cd-flat .disc-print{background-image:var(--f-disc)}
+.cd-view.cd-flat .rib{background-image:var(--f-spine)}
+.cd-view.cd-flat .front-art,.cd-view.cd-flat .inside-art,.cd-view.cd-flat .tray-art,.cd-view.cd-flat .rear-art,.cd-view.cd-flat .disc-print{background-size:cover;background-position:center}
+.cd-view.cd-flat .rib{background-size:100% 100%;background-position:center}
