@@ -209,6 +209,30 @@
   }
   .filters button:hover{color:var(--ink);border-color:var(--soft)}
   .filters button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  .fbox{position:relative;min-width:0}
+  .subfilters{display:flex;flex-wrap:wrap;gap:6px;position:absolute;top:100%;left:0;right:0;margin-top:12px}
+  .head:has(.subfilters:not([hidden])){margin-bottom:calc(clamp(28px,4vw,48px) + 43px)}
+  .subfilters button{
+    font-size:10.5px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    padding:6px 12px;
+    border:1px solid var(--rule);
+    border-radius:999px;
+    background:none;
+    color:var(--mid);
+    cursor:pointer;
+    transition:color .2s,border-color .2s;
+  }
+  .subfilters button:hover{color:var(--ink);border-color:var(--soft)}
+  .subfilters button[aria-pressed="true"]{border-color:var(--ink);color:var(--ink)}
+  @media (max-width:760px){
+    .subfilters{position:static}
+    .head:has(.subfilters:not([hidden])){margin-bottom:clamp(28px,4vw,48px)}
+  }
+  @media (max-width:560px){
+    .subfilters button{padding:6px 10px}
+  }
 
   .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(40px,5vw,72px) clamp(20px,2.4vw,36px)}
   .card{display:block;text-decoration:none;min-width:0}
@@ -428,7 +452,10 @@
   <section class="section wrap" id="work">
     <div class="head">
       <h2 class="h2">Selected work</h2>
-      <div class="filters" id="filters" role="group" aria-label="Filter work"></div>
+      <div class="fbox">
+        <div class="filters" id="filters" role="group" aria-label="Filter work"></div>
+        <div class="subfilters" id="subfilters" role="group" aria-label="Filter print design" hidden></div>
+      </div>
     </div>
     <div class="grid" id="grid"></div>
   </section>
@@ -483,20 +510,21 @@
 <script>
 (function(){
   var CATS = {pub:"Publications", music:"Music & covers", campaign:"Campaigns", web:"Web design", film:"Film"};
+  var SUBS = {report:"Reports", book:"Books & catalogues", calendar:"Calendars", poster:"Posters"};
 
   var P = [
     {id:"circle", t:"Circle", g:"Album packaging", c:"Deyan Angeloff & Frank Myonk", y:"2026", cat:"music",
      view:"cd", cd:{dir:"img/cd/circle/"},
      r:"Art direction, cover design, photography", img:[],
      d:"CD packaging for the joint album of Deyan Angeloff and Frank Myonk: cover, disc, booklet and back inlay with fourteen tracks. Frank Myonk also wrote the lyrics and handled audio engineering."},
-    {id:"shaping-genai", t:"Shaping GenAI", g:"For a sustainable and fair services economy", c:"UNI Europa", y:"2025", cat:"pub",
+    {id:"shaping-genai", t:"Shaping GenAI", g:"For a sustainable and fair services economy", c:"UNI Europa", y:"2025", cat:"pub", sub:"report",
      view:"book", book:{dir:"img/book/shaping-genai/", n:20, w:1200, h:1697,sample:"20 of 97 pages"},
      r:"Editorial design, cover, infographics, prepress", img:["genai-1","genai-2"],
      d:"Research report on generative AI in the services economy, published in five language editions: English, Spanish, French, German and Italian."},
     {id:"prevodach-bg", t:"prevodach.bg", g:"Website for a translation and legalisation agency", c:"Преводаческа агенция НОВ ВЕК", y:"2026", cat:"web",
      r:"Web design, key visual, icons", img:["prevodach-1","prevodach-2"],
      d:"Website for the НОВ ВЕК translation agency: ordering translations and the legalisation of legal, medical and academic documents, in Bulgarian, English and Russian. Tablet and smartphone layouts built around a key visual of faces painted in national flags."},
-    {id:"osobiste-mnw", t:"Osobiste MNW", g:"Mozaika wspomnień — A Mosaic of Memories", c:"Muzeum Narodowe w Warszawie", y:"2021", cat:"pub",
+    {id:"osobiste-mnw", t:"Osobiste MNW", g:"Mozaika wspomnień — A Mosaic of Memories", c:"Muzeum Narodowe w Warszawie", y:"2021", cat:"pub", sub:"book",
      view:"book", book:{dir:"img/book/osobiste-mnw/", n:24, w:1200, h:1697},
      r:"Editorial design, cover, layout", img:["mnw-1","mnw-2","mnw-3","mnw-4"],
      d:"Brochure for Osobiste MNW, a project run since 2018 by volunteers of the National Museum in Warsaw that collects visitors' and staff members' personal memories of the museum. 24 pages in A5, each story set beside a work from the collection or an archival photograph in a circular frame."},
@@ -507,17 +535,17 @@
      view:"cd", cd:{dir:"img/cd/cake/"},
      r:"Art direction, key visual, cover design", img:[],
      d:"Key visual and CD packaging for Deyan Angeloff's album: a portrait with a chocolate cake on the cover, a disc and inlay with gilded ornament, and a back cover listing seventeen tracks."},
-    {id:"post-covid", t:"The Post-Covid Transformations", g:"In the live performance and audiovisual sectors", c:"UNI Europa · Progressive Policies", y:"2025", cat:"pub",
+    {id:"post-covid", t:"The Post-Covid Transformations", g:"In the live performance and audiovisual sectors", c:"UNI Europa · Progressive Policies", y:"2025", cat:"pub", sub:"report",
      view:"book", book:{dir:"img/book/post-covid/", n:20, w:1200, h:1697,sample:"20 of 60 pages"},
      r:"Art direction, cover design", img:[],
      d:"A trade union analysis by Paulina Barańska and Séverine Picard of the post-pandemic transformations in the live performance and audiovisual sectors, with market and labour data and recommendations for trade unions."},
-    {id:"songs", t:"Songs for the Uniwers", g:"Песни за Вселената · Pieśni o Wszechświecie", c:"Author's project", y:"", cat:"pub",
+    {id:"songs", t:"Songs for the Uniwers", g:"Песни за Вселената · Pieśni o Wszechświecie", c:"Author's project", y:"", cat:"pub", sub:"book",
      r:"Author, concept, book design", img:["songs-1","songs-2","songs-3","songs-4"],
      d:"A philosophical and poetic book: a dialogue between the Herald, Sen and Hiram, gathered by Frank Myonk and reshaped together with Sen Kalinyos (AI). Editions in English, Bulgarian and Polish."},
     {id:"zrozumiec-depresje", t:"Zrozumieć depresję", g:"Understanding Depression", y:"2020", cat:"film", v:"5wgUc1i6QQM", len:"50 min",
      r:"Direction, production, campaign design", img:["depresja-1","depresja-2","depresja-3","depresja-4"],
      d:"Documentary film premiered at the 11th LGBT Film Festival in Warsaw (Kinoteka, 22 September 2020). The campaign included a B1 poster and an Instagram series. English subtitles."},
-    {id:"fly-sus", t:"Strengthening Cooperation", g:"Through the supply chain for a sustainable aeronautics sector", c:"industriAll Europe", y:"2026", cat:"pub",
+    {id:"fly-sus", t:"Strengthening Cooperation", g:"Through the supply chain for a sustainable aeronautics sector", c:"industriAll Europe", y:"2026", cat:"pub", sub:"report",
      view:"book", book:{dir:"img/book/fly-sus/", n:20, w:1200, h:1697,sample:"20 of 29 pages"},
      r:"Editorial design, maps, data visualisation", img:[],
      d:"Final report of the FLY SUS project on the European civil aeronautics supply chain: cover, layout, maps and charts."},
@@ -531,30 +559,30 @@
     {id:"poland-love-and-hatred", t:"Poland — Love and Hatred", g:"Polska — miłość i nienawiść", y:"2020", cat:"film", v:"WPbNq-amfQY", len:"39 min",
      r:"Direction, production",
      d:"Polish people believe their country is tolerant of other ethnic groups, religions and sexual orientations. The film sets that belief against the testimony of LGBT+ activists and clergy."},
-    {id:"capacity-building", t:"Capacity Building", g:"In the temporary agency work sector — final report", c:"UNI Europa", y:"", cat:"pub",
+    {id:"capacity-building", t:"Capacity Building", g:"In the temporary agency work sector — final report", c:"UNI Europa", y:"", cat:"pub", sub:"report",
      view:"book", book:{dir:"img/book/capacity-building/", n:20, w:1200, h:1697,sample:"20 of 25 pages"},
      r:"Editorial design, typography, prepress", img:["capacity-1"],
      d:"Final report of a European project on training, reskilling and working conditions in temporary agency work, with illustrated chapter spreads."},
-    {id:"uni-twin", t:"Make Twin Transition", g:"A toolkit for social dialogue on the twin transition in commerce", c:"UNI Europa", y:"2024", cat:"pub",
+    {id:"uni-twin", t:"Make Twin Transition", g:"A toolkit for social dialogue on the twin transition in commerce", c:"UNI Europa", y:"2024", cat:"pub", sub:"report",
      view:"book", book:{dir:"img/book/uni-twin/", n:20, w:1200, h:1697},
      r:"Design", img:[],
      d:"Toolkit of the EU project \u201cMake Twin Transition\u201d (VS/2022/101051952) on how to enhance social dialogue on the green and digital transition in the commerce sector. It leads trade unions step by step, from observing reality to a roadmap, and draws on four national workshops with over 70 participants."},
-    {id:"epsu-bargaining", t:"Collective Bargaining in European Healthcare", g:"An EPSU report based on the WHO-EU Nursing Action project", c:"EPSU", y:"2026", cat:"pub",
+    {id:"epsu-bargaining", t:"Collective Bargaining in European Healthcare", g:"An EPSU report based on the WHO-EU Nursing Action project", c:"EPSU", y:"2026", cat:"pub", sub:"report",
      view:"book", book:{dir:"img/book/epsu-bargaining/", n:20, w:1200, h:1697,sample:"20 of 117 pages"},
      r:"Design", img:[],
      d:"Report by Karol Florek for the European Federation of Public Service Unions, with data from 22 countries on how collective bargaining shapes pay, working time and conditions of nurses and other health workers. Includes a set of country reports."},
-    {id:"industriall-jt", t:"Building a Just Transition", g:"Towards a smart and sustainable mobility", c:"industriAll Europe · ETF", y:"2023", cat:"pub",
+    {id:"industriall-jt", t:"Building a Just Transition", g:"Towards a smart and sustainable mobility", c:"industriAll Europe · ETF", y:"2023", cat:"pub", sub:"report",
      view:"book", book:{dir:"img/book/industriall-jt/", n:20, w:1200, h:1697,sample:"20 of 84 pages"},
      r:"Design", img:[],
      d:"Final report of the JT4Mobility project for the industriAll European Trade Union and the European Transport Workers\u2019 Federation, on the social consequences of decarbonising transport for jobs and skills in the maritime, aviation, road and railway sectors."},
-    {id:"glagolica", t:"Opowie\u015bci z dziej\u00f3w g\u0142agolicy", g:"Stories from the history of Glagolitic \u2014 exhibition catalogue", c:"Biblioteka Jagiello\u0144ska", y:"2024", cat:"pub",
+    {id:"glagolica", t:"Opowie\u015bci z dziej\u00f3w g\u0142agolicy", g:"Stories from the history of Glagolitic \u2014 exhibition catalogue", c:"Biblioteka Jagiello\u0144ska", y:"2024", cat:"pub", sub:"book",
      view:"book", book:{dir:"img/book/glagolica/", n:24, w:1200, h:1714},
      r:"Design", img:[],
      d:"Catalogue of the exhibition at the Jagiellonian Library in Krak\u00f3w, 10\u201331 October 2024, on the oldest Slavic alphabet and South Slavic manuscripts from the library\u2019s collections. B5 format, with an alphabet table and full-page manuscript plates."},
-    {id:"calendar-2018", t:"The Unique Ancestry of Bulgaria", g:"Wall calendar 2018 — Unikatowe dziedzictwo Bułgarii", c:"Bulgarian Cultural Institute, Warsaw", y:"2018", cat:"pub",
+    {id:"calendar-2018", t:"The Unique Ancestry of Bulgaria", g:"Wall calendar 2018 — Unikatowe dziedzictwo Bułgarii", c:"Bulgarian Cultural Institute, Warsaw", y:"2018", cat:"pub", sub:"calendar",
      r:"Design", img:["kal2018-1","kal2018-2","kal2018-3","kal2018-4","kal2018-5","kal2018-6"],
      d:"Bilingual Polish and English wall calendar for the Bulgarian Cultural Institute in Warsaw, devoted to the treasures of Bulgarian heritage."},
-    {id:"oms", t:"One Man Show", g:"Malga Kubiak — book design", c:"Malga Kubiak", y:"", cat:"pub",
+    {id:"oms", t:"One Man Show", g:"Malga Kubiak — book design", c:"Malga Kubiak", y:"", cat:"pub", sub:"book",
      r:"Cover and book design", img:["oms-1","oms-2","oms-3","oms-4"],
      d:"Book by Malga Kubiak: cover and interior layout with archival photographs."},
     {id:"hiv-po-polsku", t:"HIV po polsku", g:"HIV in Polish", y:"2017", cat:"film", v:"SlJDxYzejUY", len:"67 min",
@@ -623,7 +651,7 @@
   /* ---------- grid + filters ---------- */
   var grid = document.getElementById("grid"), filters = document.getElementById("filters");
   grid.innerHTML = P.map(function(p){
-    return '<a class="card" href="#/'+p.id+'" data-cat="'+p.cat+'">'
+    return '<a class="card" href="#/'+p.id+'" data-cat="'+p.cat+'"'+(p.sub ? ' data-sub="'+p.sub+'"' : '')+'>'
       + '<div class="card-img"><img src="'+cardSrc(p)+'" alt="" loading="lazy">'
       + (p.v ? '<span class="badge">Film · '+esc(p.len)+'</span>' : '')
       + '</div>'
@@ -636,12 +664,22 @@
   filters.innerHTML = keys.map(function(k){
     return '<button type="button" data-f="'+k+'" aria-pressed="'+(k==="all")+'">'+(k==="all"?"All":CATS[k])+'</button>';
   }).join("");
-  function filter(k){
+  /* print sub-filters: only those with at least 2 projects */
+  var subs = document.getElementById("subfilters");
+  var subKeys = Object.keys(SUBS).filter(function(s){return P.filter(function(p){return p.cat==="pub" && p.sub===s;}).length > 1;});
+  subs.innerHTML = ["all"].concat(subKeys).map(function(s){
+    return '<button type="button" data-s="'+s+'" aria-pressed="'+(s==="all")+'">'+(s==="all"?"All print":SUBS[s])+'</button>';
+  }).join("");
+  function filter(k, s){
+    s = s || "all";
     filters.querySelectorAll("button").forEach(function(b){b.setAttribute("aria-pressed", b.dataset.f===k);});
+    subs.hidden = !(k==="pub" && subKeys.length);
+    subs.querySelectorAll("button").forEach(function(b){b.setAttribute("aria-pressed", b.dataset.s===s);});
     var ks = k.split(",");
-    grid.querySelectorAll(".card").forEach(function(c){c.hidden = !(k==="all" || ks.indexOf(c.dataset.cat)>-1);});
+    grid.querySelectorAll(".card").forEach(function(c){c.hidden = !(k==="all" || ks.indexOf(c.dataset.cat)>-1) || (s!=="all" && c.dataset.sub!==s);});
   }
   filters.addEventListener("click",function(e){var b=e.target.closest("button"); if(b) filter(b.dataset.f);});
+  subs.addEventListener("click",function(e){var b=e.target.closest("button"); if(b) filter("pub", b.dataset.s);});
   document.querySelectorAll("[data-filter]").forEach(function(a){
     a.addEventListener("click",function(){filter(a.dataset.filter);});
   });
