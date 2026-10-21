@@ -511,7 +511,7 @@
 <script>
 (function(){
   var CATS = {pub:"Publications", music:"Music & covers", campaign:"Campaigns", web:"Web design", film:"Film"};
-  var SUBS = {report:"Reports", book:"Books & catalogues", calendar:"Calendars", poster:"Posters"};
+  var SUBS = {report:"Reports", book:"Books & catalogues", calendar:"Calendars", poster:"Posters", exhibition:"Exhibitions"};
 
   var P = [
     {id:"circle", t:"Circle", g:"Album packaging", c:"Deyan Angeloff & Frank Myonk", y:"2026", cat:"music",
@@ -580,6 +580,9 @@
      view:"book", book:{dir:"img/book/glagolica/", n:24, w:1200, h:1714},
      r:"Design", img:[],
      d:"Catalogue of the exhibition at the Jagiellonian Library in Krak\u00f3w, 10\u201331 October 2024, on the oldest Slavic alphabet and South Slavic manuscripts from the library\u2019s collections. B5 format, with an alphabet table and full-page manuscript plates."},
+    {id:"novae", t:"Novae", g:"60 Years of the Bulgarian-Polish Archaeological Expedition — outdoor exhibition", c:"Bulgarian Cultural Institute & Embassy of the Republic of Bulgaria, Warsaw", y:"2021–2022", cat:"pub", sub:"exhibition",
+     r:"Exhibition design", img:["novae-1","novae-2","novae-3","novae-4","novae-5","novae-6"],
+     d:"Fifteen large-format boards on the Roman legionary camp and early Christian city of Novae on the Danube, shown on the fence of the Embassy of the Republic of Bulgaria in Warsaw, then at the Archaeological Museum in Kraków (18 October 2022 – 31 January 2023)."},
     {id:"calendar-2018", t:"The Unique Ancestry of Bulgaria", g:"Wall calendar 2018 — Unikatowe dziedzictwo Bułgarii", c:"Bulgarian Cultural Institute, Warsaw", y:"2018", cat:"pub", sub:"calendar",
      r:"Design", img:["kal2018-1","kal2018-2","kal2018-3","kal2018-4","kal2018-5","kal2018-6"],
      d:"Bilingual Polish and English wall calendar for the Bulgarian Cultural Institute in Warsaw, devoted to the treasures of Bulgarian heritage."},
@@ -594,9 +597,9 @@
   var FEATURED = ["circle","post-covid","cake","shaping-genai","songs"];
 
   var HERO = {"glagolica":"glagolica","uni-twin":"uni-twin","epsu-bargaining":"epsu-bargaining","industriall-jt":"industriall-jt","circle":"circle","shaping-genai":"genai","cake":"cake","post-covid":"postcovid","songs":"songs","fly-sus":"flysus",
-              "baldinini":"baldinini","my-splendid-fatherland":"fatherland","capacity-building":"capacity","prevodach-bg":"prevodach","osobiste-mnw":"mnw","calendar-2018":"kal2018","oms":"oms"};
+              "baldinini":"baldinini","my-splendid-fatherland":"fatherland","capacity-building":"capacity","prevodach-bg":"prevodach","osobiste-mnw":"mnw","calendar-2018":"kal2018","novae":"novae","oms":"oms"};
 
-  var DIM = {"baldinini-ig":[2000,1197],"kal2018-hero":[2000,1333],"kal2018-1":[1110,1600],"kal2018-2":[1110,1600],"kal2018-3":[1110,1600],"kal2018-4":[1110,1600],"kal2018-5":[1110,1600],"kal2018-6":[1110,1600],"oms-hero":[1111,741],"oms-1":[1111,833],"oms-2":[833,833],"oms-3":[833,833],"oms-4":[1111,833],"glagolica-hero":[2000,1333],"uni-twin-hero":[2000,1333],"epsu-bargaining-hero":[2000,1333],"industriall-jt-hero":[2000,1333],"baldinini-1":[1800,1285],"baldinini-2":[1400,1400],"baldinini-3":[845,1400],"baldinini-4":[1400,1400],"baldinini-5":[1400,1400],"baldinini-6":[1139,500],"baldinini-7":[1800,666],"baldinini-hero":[2000,1125],"cake-1":[1536,1024],"cake-2":[1536,1024],"cake-3":[1536,1024],"cake-4":[1536,1024],"cake-hero":[2000,1333],"capacity-1":[1800,1200],"capacity-hero":[2000,1333],"circle-1":[1536,1024],"circle-2":[1536,1024],"circle-3":[1536,1024],"circle-hero":[1536,1024],"depresja-1":[1120,1600],"depresja-2":[1400,1400],"depresja-3":[1400,1400],"depresja-4":[1400,1400],"fatherland-1":[1536,1024],"fatherland-2":[1536,1024],"fatherland-3":[1536,1024],"fatherland-cover":[1400,1400],"fatherland-hero":[1536,1024],"flysus-hero":[1672,941],"genai-1":[1800,1004],"genai-2":[1800,1200],"genai-hero":[2000,1333],"mnw-hero":[2000,1333],"mnw-1":[1800,1200],"mnw-2":[1800,1200],"mnw-3":[1400,1400],"mnw-4":[1400,1400],"postcovid-hero":[2000,1333],"prevodach-hero":[2000,1333],"prevodach-1":[1400,1400],"prevodach-2":[1400,1400],"songs-1":[693,984],"songs-2":[693,984],"songs-3":[693,984],"songs-4":[693,984],"songs-hero":[1697,954]};
+  var DIM = {"novae-hero":[2000,1263],"novae-1":[1800,1157],"novae-2":[1265,1400],"novae-3":[1800,1166],"novae-4":[1130,1600],"novae-5":[1130,1600],"novae-6":[1130,1600],"baldinini-ig":[2000,1197],"kal2018-hero":[2000,1333],"kal2018-1":[1110,1600],"kal2018-2":[1110,1600],"kal2018-3":[1110,1600],"kal2018-4":[1110,1600],"kal2018-5":[1110,1600],"kal2018-6":[1110,1600],"oms-hero":[1111,741],"oms-1":[1111,833],"oms-2":[833,833],"oms-3":[833,833],"oms-4":[1111,833],"glagolica-hero":[2000,1333],"uni-twin-hero":[2000,1333],"epsu-bargaining-hero":[2000,1333],"industriall-jt-hero":[2000,1333],"baldinini-1":[1800,1285],"baldinini-2":[1400,1400],"baldinini-3":[845,1400],"baldinini-4":[1400,1400],"baldinini-5":[1400,1400],"baldinini-6":[1139,500],"baldinini-7":[1800,666],"baldinini-hero":[2000,1125],"cake-1":[1536,1024],"cake-2":[1536,1024],"cake-3":[1536,1024],"cake-4":[1536,1024],"cake-hero":[2000,1333],"capacity-1":[1800,1200],"capacity-hero":[2000,1333],"circle-1":[1536,1024],"circle-2":[1536,1024],"circle-3":[1536,1024],"circle-hero":[1536,1024],"depresja-1":[1120,1600],"depresja-2":[1400,1400],"depresja-3":[1400,1400],"depresja-4":[1400,1400],"fatherland-1":[1536,1024],"fatherland-2":[1536,1024],"fatherland-3":[1536,1024],"fatherland-cover":[1400,1400],"fatherland-hero":[1536,1024],"flysus-hero":[1672,941],"genai-1":[1800,1004],"genai-2":[1800,1200],"genai-hero":[2000,1333],"mnw-hero":[2000,1333],"mnw-1":[1800,1200],"mnw-2":[1800,1200],"mnw-3":[1400,1400],"mnw-4":[1400,1400],"postcovid-hero":[2000,1333],"prevodach-hero":[2000,1333],"prevodach-1":[1400,1400],"prevodach-2":[1400,1400],"songs-1":[693,984],"songs-2":[693,984],"songs-3":[693,984],"songs-4":[693,984],"songs-hero":[1697,954]};
 
   function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
   /* Cyrillic runs get lang="bg" so Akrobat switches to its Bulgarian letterforms (locl BGR) */
