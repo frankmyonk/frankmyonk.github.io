@@ -239,6 +239,7 @@
   .card-img{position:relative;aspect-ratio:3/2;overflow:hidden;background:var(--panel);margin-bottom:16px;padding:5% 7%}
   .card-img img{width:100%;height:100%;object-fit:contain;transition:transform .8s cubic-bezier(.2,.7,.2,1),opacity .4s}
   .card:hover .card-img img{transform:scale(1.035)}
+  .card-img img.tile{padding:2% 3%}
   /* The tile module adds a contained tabletop scene without changing card geometry. */
   .badge{
     position:absolute;
@@ -604,6 +605,11 @@
   function yt(v,size){return "https://i.ytimg.com/vi/"+v+"/"+(size||"maxresdefault")+".jpg";}
   function heroSrc(p){return p.v ? yt(p.v) : "img/"+HERO[p.id]+"-hero.jpg";}
   function cardSrc(p){return p.v ? yt(p.v) : "img/"+HERO[p.id]+"-card.jpg";}
+  /* homepage tile: the project object cut out of its background (img/tile, SZABLON_URZADZENIA/tiles_cut.py); card jpg as fallback */
+  function tileImg(p){
+    if(p.v) return '<img src="'+cardSrc(p)+'" alt="" loading="lazy">';
+    return '<img class="tile" src="img/tile/'+HERO[p.id]+'-obj.webp" alt="" loading="lazy" onerror="this.onerror=null;this.className=\'\';this.src=\''+cardSrc(p)+'\'">';
+  }
   function metaLine(p){
     var bits=[];
     if(p.c) bits.push(txt(p.c));
@@ -652,7 +658,7 @@
   var grid = document.getElementById("grid"), filters = document.getElementById("filters");
   grid.innerHTML = P.map(function(p){
     return '<a class="card" href="#/'+p.id+'" data-cat="'+p.cat+'"'+(p.sub ? ' data-sub="'+p.sub+'"' : '')+'>'
-      + '<div class="card-img"><img src="'+cardSrc(p)+'" alt="" loading="lazy">'
+      + '<div class="card-img">'+tileImg(p)
       + (p.v ? '<span class="badge">Film · '+esc(p.len)+'</span>' : '')
       + '</div>'
       + '<div class="card-row"><h3>'+txt(p.t)+'</h3><span class="cat">'+CATS[p.cat]+'</span></div>'
@@ -807,6 +813,5 @@
   route();
 })();
 </script>
-<script type="module" src="js/tiles.js"></script>
 </body>
 </html>
