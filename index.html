@@ -6,10 +6,10 @@
 <meta name="color-scheme" content="dark">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Frank Myonk — Art Direction</title>
-<meta name="description" content="Frank Myonk — art direction, editorial design and documentary film. Warsaw · PL / BG / EN.">
+<meta name="description" content="Frank Myonk — art direction, brand identity, editorial design and documentary film. Warsaw · PL / BG / EN.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Frank Myonk — Art Direction">
-<meta property="og:description" content="Art direction, editorial design and documentary film. Warsaw · PL / BG / EN.">
+<meta property="og:description" content="Art direction, brand identity, editorial design and documentary film. Warsaw · PL / BG / EN.">
 <meta property="og:image" content="https://frankmyonk.github.io/img/circle-hero.jpg">
 <meta property="og:url" content="https://frankmyonk.github.io/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -448,7 +448,7 @@
   <section class="intro wrap">
     <h1>Frank Myonk</h1>
     <div class="intro-row">
-      <p><strong>Art direction, editorial design and documentary film</strong> — visual communication from concept to print, web and film.</p>
+      <p><strong>Art direction, brand identity, editorial design and documentary film</strong> — visual communication from concept to print, web and film.</p>
       <ul class="tags">
         <li>Warsaw</li>
         <li>PL / BG / EN</li>
@@ -518,7 +518,7 @@
 
 <script>
 (function(){
-  var CATS = {pub:"Publications", music:"Music & covers", campaign:"Campaigns", web:"Web design", identity:"Identity", film:"Film"};
+  var CATS = {pub:"Publications", music:"Music & covers", campaign:"Campaigns", web:"Web design", film:"Film"};
   var SUBS = {report:"Reports", book:"Books & catalogues", calendar:"Calendars", poster:"Posters", exhibition:"Exhibitions"};
 
   var P = [
@@ -594,7 +594,7 @@
     {id:"exhibition-posters", t:"Photo Exhibition Posters", g:"Plakaty do wystaw fotograficznych", c:"Bulgarian Cultural Institute, Warsaw", y:"2024–2025", cat:"pub", sub:"poster", hero:false,
      r:"Poster design", img:["exposters-1","exposters-2","exposters-3","exposters-4"],
      d:"Posters for two photography exhibitions at the Bulgarian Cultural Institute: Śnię po bułgarsku (Dreaming in Bulgarian) by Mihaela Aroyo, snapshots from the life of Bessarabian Bulgarians in Ukraine and Moldova (Warsaw, March 2025), and Deszczowe opowieści z Sofii (Rainy Tales from Sofia) by Antonio Georgiev (Warsaw, September 2024; Lublin, UMCS, March 2025). B1 posters in several photo variants."},
-    {id:"prom-bg", t:"PROM.bg", g:"Identity and website — high-quality German tools", c:"PROM.bg, Plovdiv", y:"", cat:"identity", hero:false, tile:"prom-tile.svg",
+    {id:"prom-bg", t:"PROM.bg", g:"Identity and website — high-quality German tools", c:"PROM.bg, Plovdiv", y:"", cat:"web", hero:false, tile:"prom-tile.svg",
      r:"Logo, visual identity, website design", img:[{site:"prom-web", w:1600, h:1000, scr:[[6.813,19.3,55.875,50.3,0.4,0.711,1],[68.875,22.7,23.75,54.7,3.5,2.431,1]]}],
      d:"Logo, visual identity and website design for PROM.bg, a Plovdiv shop selling high-quality German tools and accessories: a gear with a yellow ribbon, built on a 5 mm construction grid. Below, the website on a monitor and an iPad — the screens scroll together with this page."},
     {id:"calendar-2018", t:"The Unique Ancestry of Bulgaria", g:"Wall calendar 2018 — Unikatowe dziedzictwo Bułgarii", c:"Bulgarian Cultural Institute, Warsaw", y:"2018", cat:"pub", sub:"calendar",
@@ -684,7 +684,7 @@
       + '</a>';
   }).join("");
 
-  var keys = ["all"].concat(Object.keys(CATS));
+  var keys = ["all"].concat(Object.keys(CATS).filter(function(k){return P.some(function(p){return p.cat===k;});}));
   filters.innerHTML = keys.map(function(k){
     return '<button type="button" data-f="'+k+'" aria-pressed="'+(k==="all")+'">'+(k==="all"?"All":CATS[k])+'</button>';
   }).join("");
