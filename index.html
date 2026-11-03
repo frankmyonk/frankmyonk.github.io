@@ -262,6 +262,8 @@
     border-width:5px 0 5px 8px;
     border-color:transparent transparent transparent var(--ink);
   }
+  .badge--status{padding:7px 12px}
+  .badge--status::before{display:none}
   .card-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
   .card h3{
     font-family:var(--display);
@@ -508,7 +510,7 @@
 <script>
 (function(){
   var CATS = {pub:"Publications", book:"Books", music:"Music & covers", campaign:"Campaigns", web:"Web design", film:"Film"};
-  var SUBS = {report:"Reports", calendar:"Calendars", poster:"Posters", exhibition:"Exhibitions"};
+  var SUBS = {report:"Reports", brochure:"Brochures", calendar:"Calendars", poster:"Posters", exhibition:"Exhibitions"};
 
   var P = [
     {id:"shaping-genai", t:"Shaping GenAI", g:"For a sustainable and fair services economy", c:"UNI Europa", y:"2025", cat:"pub", sub:"report",
@@ -518,7 +520,7 @@
     {id:"prevodach-bg", t:"prevodach.bg", g:"Website for a translation and legalisation agency", c:"Преводаческа агенция НОВ ВЕК", y:"2026", cat:"web",
      r:"Web design, key visual, icons", img:["prevodach-1","prevodach-2"],
      d:"Website for the НОВ ВЕК translation agency: ordering translations and the legalisation of legal, medical and academic documents, in Bulgarian, English and Russian. Tablet and smartphone layouts built around a key visual of faces painted in national flags."},
-    {id:"osobiste-mnw", t:"Osobiste MNW", g:"Mozaika wspomnień — A Mosaic of Memories", c:"Muzeum Narodowe w Warszawie", y:"2021", cat:"book",
+    {id:"osobiste-mnw", t:"Osobiste MNW", g:"Mozaika wspomnień — A Mosaic of Memories", c:"Muzeum Narodowe w Warszawie", y:"2021", cat:"pub", sub:"brochure",
      view:"book", book:{dir:"img/book/osobiste-mnw/", n:24, w:1200, h:1697},
      r:"Editorial design, cover, layout", img:["mnw-1","mnw-2","mnw-3","mnw-4"],
      d:"Brochure for Osobiste MNW, a project run since 2018 by volunteers of the National Museum in Warsaw that collects visitors' and staff members' personal memories of the museum. 24 pages in A5, each story set beside a work from the collection or an archival photograph in a circular frame."},
@@ -535,9 +537,9 @@
      d:"A trade union analysis by Paulina Barańska and Séverine Picard of the post-pandemic transformations in the live performance and audiovisual sectors, with market and labour data and recommendations for trade unions."},
     {id:"lotus", t:"LOTUS Mechanism", g:"Ethical Oversight & Early Warning of Artificial Intelligence — book", c:"Author's project", y:"2026", cat:"book",
      view:"book", book:{dir:"img/book/lotus/", n:112, w:1200, h:1705},
-     r:"Author, concept, book design", img:["lotus-1","lotus-2","lotus-3"],
+     r:"Author, concept, book design", img:["lotus-hero","lotus-1","lotus-2","lotus-3"],
      d:"Book design for LOTUS Mechanism, an essay by Frank Myonk and Sen Kalinyos (AI agent) that proposes an independent, three-chamber system for the ethical oversight and early warning of artificial intelligence. A 109-page B5 hardcover mock-up grown out of the essay’s web design: the author’s cover illustration, pages printed in white and gold on matte navy paper, Futura and Source Sans 3, every one of the 48 chapters opening on a right-hand page with a large gold number, framed key sentences and diagrams facing the chapters, the five signal levels as a colour scale and the Lower, Middle and Upper Chambers as a diagram."},
-    {id:"songs", t:"Songs for the Universe", g:"A dialogue between the Herald, Sen and Hiram", c:"Author's project", y:"", cat:"book",
+    {id:"songs", t:"Songs for the Universe", g:"A dialogue between the Herald, Sen and Hiram", c:"Author's project", y:"", cat:"book", status:"In development",
      r:"Author, concept, book design", img:["songs-1","songs-2","songs-3","songs-4"],
      d:"A philosophical and poetic journey through consciousness, memory and the mystery of existence, gathered by Frank Myonk and reshaped together with Sen Kalinyos (AI). Editions in English, Bulgarian (Песни за Вселената) and Polish (Pieśni o Wszechświecie)."},
     {id:"zrozumiec-depresje", t:"Zrozumieć depresję", g:"Understanding Depression", y:"2020", cat:"film", v:"5wgUc1i6QQM", len:"50 min",
@@ -577,10 +579,10 @@
      view:"book", book:{dir:"img/book/industriall-jt/", n:20, w:1200, h:1697,sample:"20 of 84 pages"},
      r:"Design", img:[],
      d:"Final report of the JT4Mobility project for the industriAll European Trade Union and the European Transport Workers\u2019 Federation, on the social consequences of decarbonising transport for jobs and skills in the maritime, aviation, road and railway sectors."},
-    {id:"glagolica", t:"Opowie\u015bci z dziej\u00f3w g\u0142agolicy", g:"Stories from the history of Glagolitic \u2014 exhibition catalogue", c:"Biblioteka Jagiello\u0144ska", y:"2024", cat:"book",
+    {id:"glagolica", t:"Opowie\u015bci z dziej\u00f3w g\u0142agolicy", g:"Stories from the history of Glagolitic \u2014 exhibition brochure", c:"Biblioteka Jagiello\u0144ska", y:"2024", cat:"pub", sub:"brochure",
      view:"book", book:{dir:"img/book/glagolica/", n:24, w:1200, h:1714},
      r:"Design", img:[],
-     d:"Catalogue of the exhibition at the Jagiellonian Library in Krak\u00f3w, 10\u201331 October 2024, on the oldest Slavic alphabet and South Slavic manuscripts from the library\u2019s collections. B5 format, with an alphabet table and full-page manuscript plates."},
+     d:"Brochure for the exhibition at the Jagiellonian Library in Krak\u00f3w, 10\u201331 October 2024, on the oldest Slavic alphabet and South Slavic manuscripts from the library\u2019s collections. B5 format, with an alphabet table and full-page manuscript plates."},
     {id:"novae", t:"Novae", g:"60 Years of the Bulgarian-Polish Archaeological Expedition — outdoor exhibition", c:"Bulgarian Cultural Institute & Embassy of the Republic of Bulgaria, Warsaw", y:"2021–2022", cat:"pub", sub:"exhibition",
      r:"Exhibition design", img:["novae-1","novae-2","novae-3","novae-4"],
      d:"Fifteen large-format boards on the Roman legionary camp and early Christian city of Novae on the Danube, shown on the fence of the Embassy of the Republic of Bulgaria in Warsaw, then at the Archaeological Museum in Kraków (18 October 2022 – 31 January 2023)."},
@@ -606,7 +608,7 @@
   var HERO = {"lotus":"lotus","glagolica":"glagolica","uni-twin":"uni-twin","epsu-bargaining":"epsu-bargaining","industriall-jt":"industriall-jt","circle":"circle","shaping-genai":"genai","cake":"cake","post-covid":"postcovid","songs":"songs","fly-sus":"flysus",
               "baldinini":"baldinini","my-splendid-fatherland":"fatherland","capacity-building":"capacity","prevodach-bg":"prevodach","osobiste-mnw":"mnw","calendar-2018":"kal2018","novae":"novae","exhibition-posters":"exposters","prom-bg":"prom-web","oms":"oms"};
 
-  var DIM = {"lotus-hero":[2000,1333],"lotus-1":[1800,1200],"lotus-2":[1800,1200],"lotus-3":[1800,1200],"exposters-hero":[2000,1000],"exposters-1":[1120,1600],"exposters-2":[1120,1600],"exposters-3":[1120,1600],"exposters-4":[1120,1600],"novae-hero":[2000,1263],"novae-1":[1130,1600],"novae-2":[1130,1600],"novae-3":[1130,1600],"novae-4":[1130,1600],"baldinini-ig":[2000,1197],"kal2018-hero":[2000,1333],"kal2018-1":[1110,1600],"kal2018-2":[1110,1600],"kal2018-3":[1110,1600],"kal2018-4":[1110,1600],"kal2018-5":[1110,1600],"kal2018-6":[1110,1600],"oms-hero":[1111,741],"oms-1":[1111,833],"oms-2":[833,833],"oms-3":[833,833],"oms-4":[1111,833],"glagolica-hero":[2000,1333],"uni-twin-hero":[2000,1333],"epsu-bargaining-hero":[2000,1333],"industriall-jt-hero":[2000,1333],"baldinini-1":[1800,1285],"baldinini-2":[1400,1400],"baldinini-3":[845,1400],"baldinini-4":[1400,1400],"baldinini-5":[1400,1400],"baldinini-6":[1139,500],"baldinini-7":[1800,666],"baldinini-hero":[2000,1125],"cake-1":[1536,1024],"cake-2":[1536,1024],"cake-3":[1536,1024],"cake-4":[1536,1024],"cake-hero":[2000,1333],"capacity-1":[1800,1200],"capacity-hero":[2000,1333],"circle-1":[1536,1024],"circle-2":[1536,1024],"circle-3":[1536,1024],"circle-hero":[1536,1024],"depresja-1":[1120,1600],"depresja-2":[1400,1400],"depresja-3":[1400,1400],"depresja-4":[1400,1400],"fatherland-1":[1536,1024],"fatherland-2":[1536,1024],"fatherland-3":[1536,1024],"fatherland-cover":[1400,1400],"fatherland-hero":[1536,1024],"flysus-hero":[1672,941],"genai-1":[1800,1004],"genai-2":[1800,1200],"genai-hero":[2000,1333],"mnw-hero":[2000,1333],"mnw-1":[1800,1200],"mnw-2":[1800,1200],"mnw-3":[1400,1400],"mnw-4":[1400,1400],"postcovid-hero":[2000,1333],"prevodach-hero":[2000,1333],"prevodach-1":[1400,1400],"prevodach-2":[1400,1400],"songs-1":[1800,1200],"songs-2":[2000,1344],"songs-3":[947,1344],"songs-4":[947,1344],"songs-hero":[2000,1333]};
+  var DIM = {"lotus-hero":[2000,1333],"lotus-1":[1800,1200],"lotus-2":[1800,1200],"lotus-3":[1800,1200],"exposters-hero":[2000,1000],"exposters-1":[1120,1600],"exposters-2":[1120,1600],"exposters-3":[1120,1600],"exposters-4":[1120,1600],"novae-hero":[2000,1263],"novae-1":[1130,1600],"novae-2":[1130,1600],"novae-3":[1130,1600],"novae-4":[1130,1600],"baldinini-ig":[2000,1197],"kal2018-hero":[2000,1333],"kal2018-1":[1110,1600],"kal2018-2":[1110,1600],"kal2018-3":[1110,1600],"kal2018-4":[1110,1600],"kal2018-5":[1110,1600],"kal2018-6":[1110,1600],"oms-hero":[2000,1333],"oms-1":[1111,833],"oms-2":[833,833],"oms-3":[833,833],"oms-4":[1111,833],"glagolica-hero":[2000,1333],"uni-twin-hero":[2000,1333],"epsu-bargaining-hero":[2000,1333],"industriall-jt-hero":[2000,1333],"baldinini-1":[1800,1285],"baldinini-2":[1400,1400],"baldinini-3":[845,1400],"baldinini-4":[1400,1400],"baldinini-5":[1400,1400],"baldinini-6":[1139,500],"baldinini-7":[1800,666],"baldinini-hero":[2000,1125],"cake-1":[1536,1024],"cake-2":[1536,1024],"cake-3":[1536,1024],"cake-4":[1536,1024],"cake-hero":[2000,1333],"capacity-1":[1800,1200],"capacity-hero":[2000,1333],"circle-1":[1536,1024],"circle-2":[1536,1024],"circle-3":[1536,1024],"circle-hero":[1536,1024],"depresja-1":[1120,1600],"depresja-2":[1400,1400],"depresja-3":[1400,1400],"depresja-4":[1400,1400],"fatherland-1":[1536,1024],"fatherland-2":[1536,1024],"fatherland-3":[1536,1024],"fatherland-cover":[1400,1400],"fatherland-hero":[1536,1024],"flysus-hero":[1672,941],"genai-1":[1800,1004],"genai-2":[1800,1200],"genai-hero":[2000,1333],"mnw-hero":[2000,1333],"mnw-1":[1800,1200],"mnw-2":[1800,1200],"mnw-3":[1400,1400],"mnw-4":[1400,1400],"postcovid-hero":[2000,1333],"prevodach-hero":[2000,1333],"prevodach-1":[1400,1400],"prevodach-2":[1400,1400],"songs-1":[1800,1200],"songs-2":[2000,1344],"songs-3":[947,1344],"songs-4":[947,1344],"songs-hero":[2000,1333]};
 
   function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
   /* Cyrillic runs get lang="bg" so Akrobat switches to its Bulgarian letterforms (locl BGR) */
@@ -639,7 +641,7 @@
       h += '<a class="slide'+(i===0?' on':'')+'" href="#/'+p.id+'" tabindex="-1" aria-hidden="true">'
         + '<img src="'+heroSrc(p)+'" alt=""'+(i===0?' fetchpriority="high"':' loading="lazy"')+'></a>';
       c += '<a class="cap'+(i===0?' on':'')+'" href="#/'+p.id+'" aria-roledescription="slide" aria-label="'+(i+1)+' of '+FEATURED.length+': '+esc(p.t)+'"'+(i===0?'':' tabindex="-1"')+'><div class="wrap">'
-        + '<p class="kicker">Featured — '+String(i+1).padStart(2,"0")+' / '+String(FEATURED.length).padStart(2,"0")+'</p>'
+        + '<p class="kicker">Featured — '+String(i+1).padStart(2,"0")+' / '+String(FEATURED.length).padStart(2,"0")+(p.status ? ' · '+esc(p.status) : '')+'</p>'
         + '<h2>'+txt(p.t)+'</h2>'
         + '<span class="meta">'+metaLine(p)+'</span><span class="go">View project</span>'
         + '</div></a>';
@@ -671,6 +673,7 @@
     return '<a class="card" href="#/'+p.id+'" data-cat="'+p.cat+'"'+(p.sub ? ' data-sub="'+p.sub+'"' : '')+'>'
       + '<div class="card-img">'+tileImg(p)
       + (p.v ? '<span class="badge">Film · '+esc(p.len)+'</span>' : '')
+      + (p.status ? '<span class="badge badge--status">'+esc(p.status)+'</span>' : '')
       + '</div>'
       + '<div class="card-row"><h3>'+txt(p.t)+'</h3><span class="cat">'+CATS[p.cat]+'</span></div>'
       + '<p class="meta">'+(p.g ? txt(p.g)+' — ' : '')+metaLine(p)+'</p>'
@@ -778,6 +781,7 @@
     var facts = '';
     if(p.c) facts += '<dt>Client</dt><dd>'+txt(p.c)+'</dd>';
     if(p.y) facts += '<dt>Year</dt><dd>'+esc(p.y)+'</dd>';
+    if(p.status) facts += '<dt>Status</dt><dd>'+esc(p.status)+'</dd>';
     facts += '<dt>Role</dt><dd>'+esc(p.r)+'</dd>';
     facts += '<dt>Field</dt><dd>'+CATS[p.cat]+(p.len ? ' · '+esc(p.len) : '')+'</dd>';
 
