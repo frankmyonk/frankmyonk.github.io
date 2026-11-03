@@ -437,6 +437,7 @@
     <ul class="menu">
       <li><a href="#work" data-filter="web">Web design</a></li>
       <li><a href="#work" data-filter="pub">Print design</a></li>
+      <li><a href="#work" data-filter="book">Books</a></li>
       <li><a href="#work" data-filter="campaign,music">Media design</a></li>
       <li><a href="#work" data-filter="film">Film</a></li>
       <li><a href="#about">About</a></li>
@@ -506,14 +507,10 @@
 
 <script>
 (function(){
-  var CATS = {pub:"Publications", music:"Music & covers", campaign:"Campaigns", web:"Web design", film:"Film"};
-  var SUBS = {report:"Reports", book:"Books & catalogues", calendar:"Calendars", poster:"Posters", exhibition:"Exhibitions"};
+  var CATS = {pub:"Publications", book:"Books", music:"Music & covers", campaign:"Campaigns", web:"Web design", film:"Film"};
+  var SUBS = {report:"Reports", calendar:"Calendars", poster:"Posters", exhibition:"Exhibitions"};
 
   var P = [
-    {id:"circle", t:"Circle", g:"Album packaging", c:"Deyan Angeloff & Frank Myonk", y:"2026", cat:"music",
-     view:"cd", cd:{dir:"img/cd/circle/"},
-     r:"Art direction, cover design, photography", img:[],
-     d:"CD packaging for the joint album of Deyan Angeloff and Frank Myonk: cover, disc, booklet and back inlay with fourteen tracks. Frank Myonk also wrote the lyrics and handled audio engineering."},
     {id:"shaping-genai", t:"Shaping GenAI", g:"For a sustainable and fair services economy", c:"UNI Europa", y:"2025", cat:"pub", sub:"report",
      view:"book", book:{dir:"img/book/shaping-genai/", n:20, w:1200, h:1697,sample:"20 of 97 pages"},
      r:"Editorial design, cover, infographics, prepress", img:["genai-1","genai-2"],
@@ -521,7 +518,7 @@
     {id:"prevodach-bg", t:"prevodach.bg", g:"Website for a translation and legalisation agency", c:"Преводаческа агенция НОВ ВЕК", y:"2026", cat:"web",
      r:"Web design, key visual, icons", img:["prevodach-1","prevodach-2"],
      d:"Website for the НОВ ВЕК translation agency: ordering translations and the legalisation of legal, medical and academic documents, in Bulgarian, English and Russian. Tablet and smartphone layouts built around a key visual of faces painted in national flags."},
-    {id:"osobiste-mnw", t:"Osobiste MNW", g:"Mozaika wspomnień — A Mosaic of Memories", c:"Muzeum Narodowe w Warszawie", y:"2021", cat:"pub", sub:"book",
+    {id:"osobiste-mnw", t:"Osobiste MNW", g:"Mozaika wspomnień — A Mosaic of Memories", c:"Muzeum Narodowe w Warszawie", y:"2021", cat:"book",
      view:"book", book:{dir:"img/book/osobiste-mnw/", n:24, w:1200, h:1697},
      r:"Editorial design, cover, layout", img:["mnw-1","mnw-2","mnw-3","mnw-4"],
      d:"Brochure for Osobiste MNW, a project run since 2018 by volunteers of the National Museum in Warsaw that collects visitors' and staff members' personal memories of the museum. 24 pages in A5, each story set beside a work from the collection or an archival photograph in a circular frame."},
@@ -536,11 +533,11 @@
      view:"book", book:{dir:"img/book/post-covid/", n:20, w:1200, h:1697,sample:"20 of 60 pages"},
      r:"Art direction, cover design", img:[],
      d:"A trade union analysis by Paulina Barańska and Séverine Picard of the post-pandemic transformations in the live performance and audiovisual sectors, with market and labour data and recommendations for trade unions."},
-    {id:"lotus", t:"LOTUS Mechanism", g:"Ethical Oversight & Early Warning of Artificial Intelligence — book", c:"Author's project", y:"2026", cat:"pub", sub:"book",
+    {id:"lotus", t:"LOTUS Mechanism", g:"Ethical Oversight & Early Warning of Artificial Intelligence — book", c:"Author's project", y:"2026", cat:"book",
      view:"book", book:{dir:"img/book/lotus/", n:112, w:1200, h:1705},
      r:"Author, concept, book design", img:["lotus-1","lotus-2","lotus-3"],
      d:"Book design for LOTUS Mechanism, an essay by Frank Myonk and Sen Kalinyos (AI agent) that proposes an independent, three-chamber system for the ethical oversight and early warning of artificial intelligence. A 109-page B5 hardcover mock-up grown out of the essay’s web design: the author’s cover illustration, pages printed in white and gold on matte navy paper, Futura and Source Sans 3, every one of the 48 chapters opening on a right-hand page with a large gold number, framed key sentences and diagrams facing the chapters, the five signal levels as a colour scale and the Lower, Middle and Upper Chambers as a diagram."},
-    {id:"songs", t:"Songs for the Universe", g:"A dialogue between the Herald, Sen and Hiram", c:"Author's project", y:"", cat:"pub", sub:"book",
+    {id:"songs", t:"Songs for the Universe", g:"A dialogue between the Herald, Sen and Hiram", c:"Author's project", y:"", cat:"book",
      r:"Author, concept, book design", img:["songs-1","songs-2","songs-3","songs-4"],
      d:"A philosophical and poetic journey through consciousness, memory and the mystery of existence, gathered by Frank Myonk and reshaped together with Sen Kalinyos (AI). Editions in English, Bulgarian (Песни за Вселената) and Polish (Pieśni o Wszechświecie)."},
     {id:"zrozumiec-depresje", t:"Zrozumieć depresję", g:"Understanding Depression", y:"2020", cat:"film", v:"5wgUc1i6QQM", len:"50 min",
@@ -550,6 +547,10 @@
      view:"book", book:{dir:"img/book/fly-sus/", n:20, w:1200, h:1697,sample:"20 of 29 pages"},
      r:"Editorial design, maps, data visualisation", img:[],
      d:"Final report of the FLY SUS project on the European civil aeronautics supply chain: cover, layout, maps and charts."},
+    {id:"circle", t:"Circle", g:"Album packaging", c:"Deyan Angeloff & Frank Myonk", y:"2026", cat:"music",
+     view:"cd", cd:{dir:"img/cd/circle/"},
+     r:"Art direction, cover design, photography", img:[],
+     d:"CD packaging for the joint album of Deyan Angeloff and Frank Myonk: cover, disc, booklet and back inlay with fourteen tracks. Frank Myonk also wrote the lyrics and handled audio engineering."},
     {id:"baldinini", t:"Baldinini Warszawa", g:"Seasonal social media", c:"Baldinini", y:"2019–2025", cat:"campaign",
      r:"Art direction, design, production", img:["baldinini-ig","baldinini-3","baldinini-2","baldinini-4","baldinini-5","baldinini-1","baldinini-6","baldinini-7"],
      d:"Campaign visuals for the Baldinini store in Warsaw: seasonal sales, carnival and winter promotions, Facebook covers and Instagram grids."},
@@ -576,7 +577,7 @@
      view:"book", book:{dir:"img/book/industriall-jt/", n:20, w:1200, h:1697,sample:"20 of 84 pages"},
      r:"Design", img:[],
      d:"Final report of the JT4Mobility project for the industriAll European Trade Union and the European Transport Workers\u2019 Federation, on the social consequences of decarbonising transport for jobs and skills in the maritime, aviation, road and railway sectors."},
-    {id:"glagolica", t:"Opowie\u015bci z dziej\u00f3w g\u0142agolicy", g:"Stories from the history of Glagolitic \u2014 exhibition catalogue", c:"Biblioteka Jagiello\u0144ska", y:"2024", cat:"pub", sub:"book",
+    {id:"glagolica", t:"Opowie\u015bci z dziej\u00f3w g\u0142agolicy", g:"Stories from the history of Glagolitic \u2014 exhibition catalogue", c:"Biblioteka Jagiello\u0144ska", y:"2024", cat:"book",
      view:"book", book:{dir:"img/book/glagolica/", n:24, w:1200, h:1714},
      r:"Design", img:[],
      d:"Catalogue of the exhibition at the Jagiellonian Library in Krak\u00f3w, 10\u201331 October 2024, on the oldest Slavic alphabet and South Slavic manuscripts from the library\u2019s collections. B5 format, with an alphabet table and full-page manuscript plates."},
@@ -592,7 +593,7 @@
     {id:"calendar-2018", t:"The Unique Ancestry of Bulgaria", g:"Wall calendar 2018 — Unikatowe dziedzictwo Bułgarii", c:"Bulgarian Cultural Institute, Warsaw", y:"2018", cat:"pub", sub:"calendar",
      r:"Design", img:["kal2018-1","kal2018-2","kal2018-3","kal2018-4","kal2018-5","kal2018-6"],
      d:"Bilingual Polish and English wall calendar for the Bulgarian Cultural Institute in Warsaw, devoted to the treasures of Bulgarian heritage."},
-    {id:"oms", t:"One Man Show", g:"Malga Kubiak — book design", c:"Malga Kubiak", y:"", cat:"pub", sub:"book",
+    {id:"oms", t:"One Man Show", g:"Malga Kubiak — book design", c:"Malga Kubiak", y:"", cat:"book",
      r:"Cover and book design", img:["oms-1","oms-2","oms-3","oms-4"],
      d:"Book by Malga Kubiak: cover and interior layout with archival photographs."},
     {id:"hiv-po-polsku", t:"HIV po polsku", g:"HIV in Polish", y:"2017", cat:"film", v:"SlJDxYzejUY", len:"67 min",
@@ -600,7 +601,7 @@
      d:"Documentary film premiered on YouTube on 1 December 2017, World AIDS Day. Original version, no subtitles."}
   ];
 
-  var FEATURED = ["circle","post-covid","cake","shaping-genai","songs"];
+  var FEATURED = ["songs","post-covid","cake","shaping-genai","circle"];
 
   var HERO = {"lotus":"lotus","glagolica":"glagolica","uni-twin":"uni-twin","epsu-bargaining":"epsu-bargaining","industriall-jt":"industriall-jt","circle":"circle","shaping-genai":"genai","cake":"cake","post-covid":"postcovid","songs":"songs","fly-sus":"flysus",
               "baldinini":"baldinini","my-splendid-fatherland":"fatherland","capacity-building":"capacity","prevodach-bg":"prevodach","osobiste-mnw":"mnw","calendar-2018":"kal2018","novae":"novae","exhibition-posters":"exposters","prom-bg":"prom-web","oms":"oms"};
