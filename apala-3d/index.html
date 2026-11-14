@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Apala chrom – model 3D</title>
+<style>
+  :root{--ink:#1d2024;--glass:rgba(255,255,255,.82);--line:rgba(0,0,0,.14)}
+  html,body{margin:0;height:100%;overflow:hidden;font-family:-apple-system,"Helvetica Neue",Arial,sans-serif;
+    background:linear-gradient(180deg,#c3c6ca 0%,#8a8e93 100%)}
+  #c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+  .title{position:fixed;top:14px;left:16px;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.35)}
+  .title b{display:block;font-size:18px;letter-spacing:.02em}
+  .title span{font-size:12px;opacity:.9}
+  .bar{position:fixed;left:16px;right:16px;bottom:16px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+  button,.sl{font:600 13px/1 inherit;font-family:inherit;color:var(--ink);background:var(--glass);border:1px solid var(--line);
+    border-radius:999px;padding:10px 14px;cursor:pointer;backdrop-filter:blur(8px)}
+  button:hover{background:#fff}
+  button[aria-pressed="true"]{background:#1d2024;color:#fff}
+  .sl{display:flex;gap:8px;align-items:center;cursor:default}
+  .sl input{width:110px}
+  .hint{position:fixed;top:14px;right:16px;color:#fff;font-size:12px;text-align:right;text-shadow:0 1px 6px rgba(0,0,0,.35);max-width:240px}
+  @media (max-width:600px){.hint{display:none}}
+</style>
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="title"><b>Blue Water Apala – chrom</b><span>Model 3D wykonany na podstawie zdjęć produktu (proporcje przybliżone)</span></div>
+<div class="hint">Przeciągnij – obrót · kółko – zoom<br>prawy przycisk – przesuwanie</div>
+<div class="bar">
+  <button data-v="front">Przód</button>
+  <button data-v="right">Prawa</button>
+  <button data-v="back">Tył</button>
+  <button data-v="left">Lewa</button>
+  <button data-v="top">Góra</button>
+  <button id="bAuto" aria-pressed="true">Auto-obrót</button>
+  <button id="bWater" aria-pressed="false">Woda</button>
+  <button id="bSlab" aria-pressed="false">Blat</button>
+  <label class="sl">Wylewka <input id="swing" type="range" min="0" max="360" value="0"><span id="swv">0°</span></label>
+  <button id="bGlb">Pobierz GLB</button>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {GLTFExporter} from 'three/addons/exporters/GLTFExporter.js';
+
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true, preserveDrawingBuffer:false});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+// jasne "studio" do odbić w chromie: gradientowa kopuła + softboxy
+function studio(){
+  const s = new THREE.Scene();
+  const gc = document.createElement('canvas'); gc.width = 4; gc.height = 256;
+  const g = gc.getContext('2d'), grad = g.createLinearGradient(0,0,0,256);
+  grad.addColorStop(0,'#d8dbe0'); grad.addColorStop(0.42,'#8d9197'); grad.addColorStop(0.52,'#2b2d30'); grad.addColorStop(0.64,'#6f7378'); grad.addColorStop(1,'#c6c9cd');
+  g.fillStyle = grad; g.fillRect(0,0,4,256);
+  const tex = new THREE.CanvasTexture(gc); tex.colorSpace = THREE.SRGBColorSpace;
+  s.add(new THREE.Mesh(new THREE.SphereGeometry(60, 48, 24), new THREE.MeshBasicMaterial({map:tex, side:THREE.BackSide})));
+  const box = (w,h,p,rot,pow=7) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w,h), new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
+    m.material.color.setScalar(pow); m.position.set(...p); m.lookAt(0,0,0); s.add(m);
+  };
+  box(50,22,[0,45,0],0,3.5);    // góra
+  box(10,36,[-48,12,10],0,3);   // lewy
+  box(10,36,[48,12,14],0,3);    // prawy
+  box(34,7,[0,8,50],0,2.5);     // przód – pasek
+  box(26,8,[-10,14,-50],0,3);   // tył
+  return s;
+}
+scene.environment = pmrem.fromScene(studio(), 0.02).texture;
+
+const camera = new THREE.PerspectiveCamera(32, 1, 0.5, 400);
+const TARGET = new THREE.Vector3(-5, 13, 0);
+camera.position.set(34, 26, 48);
+const controls = new OrbitControls(camera, canvas);
+controls.target.copy(TARGET);
+controls.enableDamping = true;
+controls.minDistance = 12;
+controls.maxDistance = 140;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 1.4;
+controls.update();
+
+// ---- światło ----
+const sun = new THREE.DirectionalLight(0xffffff, 2.2);
+sun.position.set(26, 50, 24);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, {left:-30, right:30, top:40, bottom:-20, near:1, far:140});
+sun.shadow.bias = -0.0004;
+sun.shadow.radius = 5;
+scene.add(sun);
+
+// ---- materiały ----
+const chrome = new THREE.MeshStandardMaterial({color:0xffffff, metalness:1, roughness:0.05, envMapIntensity:1.25});
+const satin  = new THREE.MeshStandardMaterial({color:0xdfe1e4, metalness:1, roughness:0.28, envMapIntensity:1.0});
+const dark   = new THREE.MeshStandardMaterial({color:0x2a2c2f, metalness:0.2, roughness:0.55});
+
+// ---- pomocnicze ----
+const faucet = new THREE.Group();   // eksportowany do GLB
+scene.add(faucet);
+function mesh(geo, mat, parent){ const m = new THREE.Mesh(geo, mat); m.castShadow = true; parent.add(m); return m; }
+function cylX(r1, r2, len, x, y, mat, parent){            // walec wzdłuż osi X, r1 po stronie -X
+  const m = mesh(new THREE.CylinderGeometry(r1, r2, len, 64), mat, parent);
+  m.rotation.z = Math.PI/2; m.position.set(x, y, 0); return m;
+}
+function ring(R, t, x, y, mat, parent, axis='x'){
+  const m = mesh(new THREE.TorusGeometry(R, t, 16, 80), mat, parent);
+  if(axis==='x') m.rotation.y = Math.PI/2; else m.rotation.x = Math.PI/2;
+  m.position.set(x, y, 0); return m;
+}
+
+// ---- stopa i kolumna ----
+const YB = 5.5;                                           // oś korpusu zaworowego
+mesh(new THREE.CylinderGeometry(2.0, 2.2, 0.5, 64), chrome, faucet).position.y = 0.25;
+ring(2.05, 0.1, 0, 0.52, satin, faucet, 'y');
+mesh(new THREE.CylinderGeometry(1.0, 1.55, 0.8, 64), chrome, faucet).position.y = 0.9;
+
+// ---- korpus zaworowy (poziomy walec z kopułą po prawej) ----
+const valve = new THREE.Group(); valve.position.y = YB; faucet.add(valve);
+cylX(2.2, 2.2, 4.9, 1.05, 0, chrome, valve);                       // x: -1.4 … 3.5
+const dome = mesh(new THREE.SphereGeometry(2.2, 64, 32, 0, Math.PI*2, 0, Math.PI/2), chrome, valve);
+dome.rotation.z = -Math.PI/2; dome.position.x = 3.5;
+ring(2.2, 0.1, -1.4, 0, satin, valve);                             // szew
+cylX(1.45, 1.45, 3.1, -2.95, 0, chrome, valve);                    // kołnierz po lewej
+cylX(1.0, 1.45, 0.5, -4.75, 0, satin, valve);                      // zwężony czubek
+ring(1.45, 0.08, -4.5, 0, satin, valve);
+
+// ---- dźwignia mieszacza (prawa) ----
+const lever = new THREE.Group(); lever.position.x = 3.6; valve.add(lever);
+mesh(new THREE.CylinderGeometry(0.85, 0.95, 0.5, 48), satin, lever).position.y = 2.25;
+mesh(new THREE.CylinderGeometry(0.34, 0.4, 5.2, 32), chrome, lever).position.y = 4.8;
+mesh(new THREE.SphereGeometry(0.34, 32, 16), chrome, lever).position.y = 7.4;
+
+// ---- krótka dźwignia wody filtrowanej (lewa) ----
+const pin = new THREE.Group(); pin.position.x = -3.7; valve.add(pin);
+mesh(new THREE.CylinderGeometry(0.62, 0.7, 0.4, 48), satin, pin).position.y = 1.4;
+mesh(new THREE.CylinderGeometry(0.26, 0.3, 2.4, 32), chrome, pin).position.y = 2.7;
+mesh(new THREE.SphereGeometry(0.26, 32, 16), chrome, pin).position.y = 3.9;
+
+// ---- wylewka (obrotowa o 360°) ----
+const swing = new THREE.Group(); faucet.add(swing);
+const YT = 26.1, R = 4.5, k = 0.5523, XH = -9.5;                    // wysokość osi, promień łuku, początek głowicy
+const path = new THREE.CurvePath();
+path.add(new THREE.LineCurve3(new THREE.Vector3(0,0.6,0), new THREE.Vector3(0,YT-R,0)));
+path.add(new THREE.CubicBezierCurve3(
+  new THREE.Vector3(0,YT-R,0), new THREE.Vector3(0,YT-R+k*R,0),
+  new THREE.Vector3(-R+k*R,YT,0), new THREE.Vector3(-R,YT,0)));
+path.add(new THREE.LineCurve3(new THREE.Vector3(-R,YT,0), new THREE.Vector3(XH,YT,0)));
+mesh(new THREE.TubeGeometry(path, 260, 1.0, 48, false), chrome, swing);
+
+const XE = -17.3;                                                   // koniec głowicy
+cylX(1.2, 1.2, XH-XE, (XH+XE)/2, YT, chrome, swing);
+ring(1.2, 0.14, XH, YT, satin, swing);
+const cap = cylX(1.08, 1.2, 0.35, XE-0.1, YT, satin, swing);        // zaokrąglony czubek
+ring(1.17, 0.07, XE+0.08, YT, satin, swing);
+// perlatory pod głowicą: duży (przy końcu) i mały
+function aerator(x, r, len){
+  const g = new THREE.Group(); g.position.set(x, YT-1.2, 0); swing.add(g);
+  mesh(new THREE.CylinderGeometry(r, r*1.08, len, 48), chrome, g).position.y = -len/2;
+  const mesh_ = mesh(new THREE.CylinderGeometry(r*0.78, r*0.78, 0.06, 48), dark, g);
+  mesh_.position.y = -len - 0.02; mesh_.castShadow = false;
+  return g;
+}
+aerator(-15.2, 0.62, 0.8);
+aerator(-12.9, 0.38, 0.55);
+
+// ---- woda (opcjonalna) ----
+const swc = document.createElement('canvas'); swc.width = 8; swc.height = 256;
+const sctx = swc.getContext('2d');
+for(let y=0;y<256;y++){ const a = 0.25 + Math.random()*0.65; sctx.fillStyle = `rgba(255,255,255,${a})`; sctx.fillRect(0,y,8,1); }
+const streamTex = new THREE.CanvasTexture(swc); streamTex.wrapT = THREE.RepeatWrapping; streamTex.repeat.set(1, 5);
+const stream = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.11, 0.09, YT-1.2-0.55-0.2, 16, 1, true),
+  new THREE.MeshBasicMaterial({color:0xd4ebff, map:streamTex, transparent:true, opacity:0.8, depthWrite:false, side:THREE.DoubleSide}));
+stream.position.set(-12.9, (YT-1.2-0.55-0.2)/2 + 0.1, 0); stream.visible = false;
+scene.add(stream);
+function followStream(){                                           // strumień podąża za obracaną wylewką
+  const a = swing.rotation.y, x = -12.9;
+  stream.position.x = x*Math.cos(a); stream.position.z = -x*Math.sin(a);
+}
+
+// ---- podłoże: cień + opcjonalny blat ----
+const shadowCatcher = new THREE.Mesh(new THREE.PlaneGeometry(240, 240), new THREE.ShadowMaterial({opacity:0.28}));
+shadowCatcher.rotation.x = -Math.PI/2; shadowCatcher.receiveShadow = true; scene.add(shadowCatcher);
+const slab = new THREE.Mesh(new THREE.BoxGeometry(70, 3, 46),
+  new THREE.MeshStandardMaterial({color:0xe8e9eb, roughness:0.3, metalness:0, envMapIntensity:0.7}));
+slab.position.y = -1.5; slab.receiveShadow = true; slab.visible = false; scene.add(slab);
+
+// ---- UI ----
+const $ = id => document.getElementById(id);
+function toggle(btn, on){ btn.setAttribute('aria-pressed', on); }
+$('bAuto').onclick = e => { controls.autoRotate = !controls.autoRotate; toggle(e.currentTarget, controls.autoRotate); };
+$('bWater').onclick = e => { stream.visible = !stream.visible; toggle(e.currentTarget, stream.visible); };
+$('bSlab').onclick = e => { slab.visible = !slab.visible; shadowCatcher.visible = !slab.visible; toggle(e.currentTarget, slab.visible); };
+$('swing').oninput = e => { swing.rotation.y = THREE.MathUtils.degToRad(+e.target.value); $('swv').textContent = e.target.value + '°'; followStream(); };
+controls.addEventListener('start', () => { controls.autoRotate = false; toggle($('bAuto'), false); });
+
+const VIEWS = {front:[0,15,62], back:[0,15,-62], right:[62,15,0], left:[-62,15,0], top:[0.01,95,0]};
+let tween = null;
+document.querySelectorAll('[data-v]').forEach(b => b.onclick = () => {
+  controls.autoRotate = false; toggle($('bAuto'), false);
+  const v = VIEWS[b.dataset.v];
+  tween = {p0:camera.position.clone(), t0:controls.target.clone(), p1:new THREE.Vector3(...v), t1:TARGET.clone(), s:performance.now()};
+});
+
+$('bGlb').onclick = () => {
+  new GLTFExporter().parse(faucet, buf => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([buf], {type:'model/gltf-binary'}));
+    a.download = 'Apala_chrom.glb'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }, err => console.error(err), {binary:true});
+};
+
+function resize(){
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h, false); camera.aspect = w/h;
+  const asp = w/h;                                                 // wąski ekran – szersze pole widzenia, żeby wylewka się mieściła
+  camera.fov = asp < 1 ? Math.min(80, 2*Math.atan(Math.tan(THREE.MathUtils.degToRad(16))/asp*1.05)*180/Math.PI) : 32;
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize); resize();
+
+renderer.setAnimationLoop(() => {
+  if(tween){
+    const k = Math.min(1, (performance.now()-tween.s)/700), e = k*k*(3-2*k);
+    camera.position.lerpVectors(tween.p0, tween.p1, e);
+    controls.target.lerpVectors(tween.t0, tween.t1, e);
+    if(k === 1) tween = null;
+  }
+  streamTex.offset.y -= 0.03;
+  controls.update();
+  renderer.render(scene, camera);
+});
+</script>
+</body>
+</html>
