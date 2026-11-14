@@ -19,10 +19,17 @@
   button[aria-pressed="true"]{background:#e9ebee;color:#1d2024}
   .sl{display:flex;gap:8px;align-items:center;cursor:default}
   .sl input{width:110px}
-  .sl select{font:inherit;color:var(--ink);background:transparent;border:0;outline:0;cursor:pointer}
-  .sl select option{color:#1d2024}
+  .sw{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;width:100%;margin-bottom:4px}
+  .sw button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;background:none;border:0;
+    backdrop-filter:none;font:500 11px/1.1 inherit;font-family:inherit;color:#c9ccd1;width:64px}
+  .sw button:hover{background:none;color:#fff}
+  .sw i{width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.18);box-shadow:inset 0 -3px 6px rgba(0,0,0,.35)}
+  .sw button[aria-pressed="true"]{background:none;color:#fff}
+  .sw button[aria-pressed="true"] i{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.22),inset 0 -3px 6px rgba(0,0,0,.35)}
   .hint{position:fixed;top:14px;right:16px;color:#fff;font-size:12px;text-align:right;text-shadow:0 1px 6px rgba(0,0,0,.35);max-width:240px}
-  @media (max-width:600px){.hint{display:none}}
+  @media (max-width:600px){.hint{display:none}
+    .sw{gap:6px}.sw button{width:38px;font-size:0;gap:0}.sw i{width:30px;height:30px}
+    button,.sl{padding:8px 11px;font-size:12px}.bar{gap:6px;bottom:12px}}
 </style>
 <script type="importmap">
 {"imports":{
@@ -35,16 +42,7 @@
 <div class="title"><b>Blue Water Apala – <span id="fname">chrom</span></b><span>Model 3D wykonany na podstawie zdjęć produktu (proporcje przybliżone)</span></div>
 <div class="hint">Przeciągnij – obrót · kółko – zoom<br>prawy przycisk – przesuwanie</div>
 <div class="bar">
-  <label class="sl">Wykończenie
-    <select id="finish">
-      <option value="chrome">chrom</option>
-      <option value="gold">kolor złoty</option>
-      <option value="steel">kolor stali</option>
-      <option value="gun">grafit (Gun Metal)</option>
-      <option value="black">czarny mat</option>
-      <option value="brass">mosiądz antyczny</option>
-      <option value="copper">miedź</option>
-    </select></label>
+  <div class="sw" id="swatches"></div>
   <button data-v="front">Przód</button>
   <button data-v="right">Prawa</button>
   <button data-v="back">Tył</button>
@@ -247,12 +245,24 @@ const FINISH = {
   brass: {name:'mosiądz antyczny',   file:'mosiadz',   main:[0xa98552,0.36,1],   satin:[0x8c6c40,0.45,1]},
   copper:{name:'miedź',              file:'miedz',     main:[0xe0a07c,0.16,1],   satin:[0xc4876a,0.32,1]},
 };
+// próbki kolorów obok siebie
+const SWATCH = {chrome:['#ffffff','#c4c8cd','#6f747a'], gold:['#fff1c4','#e8c072','#9c7432'], steel:['#eef0f2','#c3c7cc','#8d9298'],
+  gun:['#a9adb3','#6b6f75','#3c3f44'], black:['#4a4b4f','#26272a','#141416'], brass:['#d9bb88','#a07a46','#64482a'], copper:['#f6c9ab','#d58f69','#8f5136']};
 let finishKey = 'chrome';
-$('finish').onchange = e => {
-  finishKey = e.target.value; const f = FINISH[finishKey];
+function setFinish(key){
+  finishKey = key; const f = FINISH[key];
   [[chrome, f.main], [satin, f.satin]].forEach(([m, v]) => { m.color.setHex(v[0]); m.roughness = v[1]; m.metalness = v[2]; });
   $('fname').textContent = f.name; document.title = 'Apala ' + f.name + ' – model 3D';
-};
+  document.querySelectorAll('#swatches button').forEach(b => toggle(b, b.dataset.f === key));
+}
+for(const [key, f] of Object.entries(FINISH)){
+  const b = document.createElement('button'); b.dataset.f = key; b.title = f.name;
+  const [a, m, d] = SWATCH[key];
+  b.innerHTML = `<i style="background:linear-gradient(135deg,${a} 0%,${m} 45%,${d} 100%)"></i>${f.name.replace(' (Gun Metal)','')}`;
+  b.onclick = () => setFinish(key);
+  $('swatches').appendChild(b);
+}
+setFinish('chrome');
 $('tilt').oninput = e => { capG.rotation.x = THREE.MathUtils.degToRad(+e.target.value); $('tlv').textContent = e.target.value + '°'; };
 controls.addEventListener('start', () => { controls.autoRotate = false; toggle($('bAuto'), false); });
 
