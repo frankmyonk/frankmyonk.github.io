@@ -42,6 +42,7 @@
   <button id="bWater" aria-pressed="false">Woda</button>
   <button id="bSlab" aria-pressed="false">Blat</button>
   <label class="sl">Wylewka <input id="swing" type="range" min="0" max="360" value="0"><span id="swv">0°</span></label>
+  <label class="sl">Rączka <input id="tilt" type="range" min="-25" max="25" value="0"><span id="tlv">0°</span></label>
   <button id="bGlb">Pobierz GLB</button>
 </div>
 
@@ -129,24 +130,37 @@ mesh(new THREE.CylinderGeometry(2.0, 2.2, 0.5, 64), chrome, faucet).position.y =
 ring(2.05, 0.1, 0, 0.52, satin, faucet, 'y');
 mesh(new THREE.CylinderGeometry(1.0, 1.55, 0.8, 64), chrome, faucet).position.y = 0.9;
 
-// ---- korpus zaworowy (poziomy walec z kopułą po prawej) ----
+// ---- korpus zaworowy: poziomy walec ścięty płasko z obu stron ----
 const valve = new THREE.Group(); valve.position.y = YB; faucet.add(valve);
-cylX(2.2, 2.2, 4.9, 1.05, 0, chrome, valve);                       // x: -1.4 … 3.5
-const dome = mesh(new THREE.SphereGeometry(2.2, 64, 32, 0, Math.PI*2, 0, Math.PI/2), chrome, valve);
-dome.rotation.z = -Math.PI/2; dome.position.x = 3.5;
-ring(2.2, 0.1, -1.4, 0, satin, valve);                             // szew
-cylX(1.45, 1.45, 3.1, -2.95, 0, chrome, valve);                    // kołnierz po lewej
-cylX(1.0, 1.45, 0.5, -4.75, 0, satin, valve);                      // zwężony czubek
-ring(1.45, 0.08, -4.5, 0, satin, valve);
+const XL = -5.2, XS = -2.4, XC = 1.8, XR = 5.4, RB = 2.15, BEV = 0.1, GAP = 0.14;
+// segment walca z fazkami na wybranych końcach
+function segment(x0, x1, parent, b0 = BEV, b1 = BEV){
+  cylX(RB, RB, x1-x0-b0-b1, (x0+b0 + x1-b1)/2, 0, chrome, parent);
+  if(b0) cylX(RB-b0, RB, b0, x0+b0/2, 0, chrome, parent);
+  if(b1) cylX(RB, RB-b1, b1, x1-b1/2, 0, chrome, parent);
+}
+function face(x, s, parent){                                       // płaskie czoło
+  const f = mesh(new THREE.CircleGeometry(RB-BEV, 64), chrome, parent);
+  f.rotation.y = s*Math.PI/2; f.position.x = x; return f;
+}
+segment(XL, XC, valve);                                            // stała część korpusu (z krótkim kranikiem)
+face(XL, -1, valve);
+cylX(RB-0.3, RB-0.3, 0.6, XC + GAP/2, 0, dark, valve);              // dno szczeliny
 
-// ---- dźwignia mieszacza (prawa) ----
-const lever = new THREE.Group(); lever.position.x = 3.6; valve.add(lever);
-mesh(new THREE.CylinderGeometry(0.85, 0.95, 0.5, 48), satin, lever).position.y = 2.25;
-mesh(new THREE.CylinderGeometry(0.34, 0.4, 5.2, 32), chrome, lever).position.y = 4.8;
-mesh(new THREE.SphereGeometry(0.34, 32, 16), chrome, lever).position.y = 7.4;
+// ---- ruchoma tuleja z dużą rączką (obraca się wokół osi korpusu) ----
+const capG = new THREE.Group(); valve.add(capG);
+segment(XC + GAP, XR, capG);
+face(XR, 1, capG);
+// znaczniki na czole: "|" u góry i "–" z przodu
+const mk1 = mesh(new THREE.BoxGeometry(0.02, 0.32, 0.06), satin, capG); mk1.position.set(XR+0.005, 1.45, 0);
+const mk2 = mesh(new THREE.BoxGeometry(0.02, 0.06, 0.32), satin, capG); mk2.position.set(XR+0.005, -0.35, 1.4);
+const lever = new THREE.Group(); lever.position.x = 3.6; capG.add(lever);
+mesh(new THREE.CylinderGeometry(0.42, 0.46, 0.5, 32), chrome, lever).position.y = RB + 0.1;
+mesh(new THREE.CylinderGeometry(0.34, 0.4, 5.2, 32), chrome, lever).position.y = RB + 2.8;
+mesh(new THREE.SphereGeometry(0.34, 32, 16), chrome, lever).position.y = RB + 5.4;
 
 // ---- krótka dźwignia wody filtrowanej (lewa) ----
-const pin = new THREE.Group(); pin.position.x = -3.7; valve.add(pin);
+const pin = new THREE.Group(); pin.position.x = -3.4; valve.add(pin);
 mesh(new THREE.CylinderGeometry(0.62, 0.7, 0.4, 48), satin, pin).position.y = 1.4;
 mesh(new THREE.CylinderGeometry(0.26, 0.3, 2.4, 32), chrome, pin).position.y = 2.7;
 mesh(new THREE.SphereGeometry(0.26, 32, 16), chrome, pin).position.y = 3.9;
@@ -207,6 +221,7 @@ $('bAuto').onclick = e => { controls.autoRotate = !controls.autoRotate; toggle(e
 $('bWater').onclick = e => { stream.visible = !stream.visible; toggle(e.currentTarget, stream.visible); };
 $('bSlab').onclick = e => { slab.visible = !slab.visible; shadowCatcher.visible = !slab.visible; toggle(e.currentTarget, slab.visible); };
 $('swing').oninput = e => { swing.rotation.y = THREE.MathUtils.degToRad(+e.target.value); $('swv').textContent = e.target.value + '°'; followStream(); };
+$('tilt').oninput = e => { capG.rotation.x = THREE.MathUtils.degToRad(+e.target.value); $('tlv').textContent = e.target.value + '°'; };
 controls.addEventListener('start', () => { controls.autoRotate = false; toggle($('bAuto'), false); });
 
 const VIEWS = {front:[0,15,62], back:[0,15,-62], right:[62,15,0], left:[-62,15,0], top:[0.01,95,0]};
