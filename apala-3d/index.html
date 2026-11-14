@@ -19,6 +19,8 @@
   button[aria-pressed="true"]{background:#e9ebee;color:#1d2024}
   .sl{display:flex;gap:8px;align-items:center;cursor:default}
   .sl input{width:110px}
+  .sl select{font:inherit;color:var(--ink);background:transparent;border:0;outline:0;cursor:pointer}
+  .sl select option{color:#1d2024}
   .hint{position:fixed;top:14px;right:16px;color:#fff;font-size:12px;text-align:right;text-shadow:0 1px 6px rgba(0,0,0,.35);max-width:240px}
   @media (max-width:600px){.hint{display:none}}
 </style>
@@ -33,8 +35,16 @@
 <div class="title"><b>Blue Water Apala – <span id="fname">chrom</span></b><span>Model 3D wykonany na podstawie zdjęć produktu (proporcje przybliżone)</span></div>
 <div class="hint">Przeciągnij – obrót · kółko – zoom<br>prawy przycisk – przesuwanie</div>
 <div class="bar">
-  <button data-f="chrome" aria-pressed="true">Chrom</button>
-  <button data-f="gold" aria-pressed="false">Złoto</button>
+  <label class="sl">Wykończenie
+    <select id="finish">
+      <option value="chrome">chrom</option>
+      <option value="gold">kolor złoty</option>
+      <option value="steel">kolor stali</option>
+      <option value="gun">grafit (Gun Metal)</option>
+      <option value="black">czarny mat</option>
+      <option value="brass">mosiądz antyczny</option>
+      <option value="copper">miedź</option>
+    </select></label>
   <button data-v="front">Przód</button>
   <button data-v="right">Prawa</button>
   <button data-v="back">Tył</button>
@@ -106,6 +116,10 @@ Object.assign(sun.shadow.camera, {left:-30, right:30, top:40, bottom:-20, near:1
 sun.shadow.bias = -0.0004;
 sun.shadow.radius = 5;
 scene.add(sun);
+const rim = new THREE.DirectionalLight(0xdfe8ff, 2.0);             // światło konturowe od tyłu
+rim.position.set(-30, 30, -40); scene.add(rim);
+const rim2 = new THREE.DirectionalLight(0xffffff, 1.0);
+rim2.position.set(35, 10, -30); scene.add(rim2);
 
 // ---- materiały ----
 const chrome = new THREE.MeshStandardMaterial({color:0xffffff, metalness:1, roughness:0.05, envMapIntensity:1.25});
@@ -223,17 +237,22 @@ $('bAuto').onclick = e => { controls.autoRotate = !controls.autoRotate; toggle(e
 $('bWater').onclick = e => { stream.visible = !stream.visible; toggle(e.currentTarget, stream.visible); };
 $('bSlab').onclick = e => { slab.visible = !slab.visible; shadowCatcher.visible = !slab.visible; toggle(e.currentTarget, slab.visible); };
 $('swing').oninput = e => { swing.rotation.y = THREE.MathUtils.degToRad(+e.target.value); $('swv').textContent = e.target.value + '°'; followStream(); };
+// wykończenia z oferty bluewater.pl; [kolor, chropowatość, metaliczność] – odcienie przybliżone
 const FINISH = {
-  chrome:{name:'chrom', main:[0xffffff, 0.05], satin:[0xdfe1e4, 0.28]},
-  gold:  {name:'złoto', main:[0xf6d18a, 0.08], satin:[0xd9b06a, 0.30]},
+  chrome:{name:'chrom',              file:'chrom',     main:[0xffffff,0.05,1],   satin:[0xdfe1e4,0.28,1]},
+  gold:  {name:'kolor złoty',        file:'zloty',     main:[0xf6d18a,0.08,1],   satin:[0xd9b06a,0.30,1]},
+  steel: {name:'kolor stali',        file:'stal',      main:[0xcfd2d6,0.34,1],   satin:[0xb9bdc2,0.45,1]},
+  gun:   {name:'grafit (Gun Metal)', file:'grafit',    main:[0x8a8d93,0.22,1],   satin:[0x6e7177,0.35,1]},
+  black: {name:'czarny mat',         file:'czarny_mat',main:[0x2a2b2e,0.5,0.3],  satin:[0x34363a,0.45,0.45]},
+  brass: {name:'mosiądz antyczny',   file:'mosiadz',   main:[0xa98552,0.36,1],   satin:[0x8c6c40,0.45,1]},
+  copper:{name:'miedź',              file:'miedz',     main:[0xe0a07c,0.16,1],   satin:[0xc4876a,0.32,1]},
 };
-document.querySelectorAll('[data-f]').forEach(b => b.onclick = () => {
-  const f = FINISH[b.dataset.f];
-  chrome.color.setHex(f.main[0]); chrome.roughness = f.main[1];
-  satin.color.setHex(f.satin[0]); satin.roughness = f.satin[1];
+let finishKey = 'chrome';
+$('finish').onchange = e => {
+  finishKey = e.target.value; const f = FINISH[finishKey];
+  [[chrome, f.main], [satin, f.satin]].forEach(([m, v]) => { m.color.setHex(v[0]); m.roughness = v[1]; m.metalness = v[2]; });
   $('fname').textContent = f.name; document.title = 'Apala ' + f.name + ' – model 3D';
-  document.querySelectorAll('[data-f]').forEach(x => toggle(x, x === b));
-});
+};
 $('tilt').oninput = e => { capG.rotation.x = THREE.MathUtils.degToRad(+e.target.value); $('tlv').textContent = e.target.value + '°'; };
 controls.addEventListener('start', () => { controls.autoRotate = false; toggle($('bAuto'), false); });
 
@@ -249,7 +268,7 @@ $('bGlb').onclick = () => {
   new GLTFExporter().parse(faucet, buf => {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([buf], {type:'model/gltf-binary'}));
-    a.download = 'Apala_' + ($('fname').textContent === 'złoto' ? 'zloto' : 'chrom') + '.glb'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    a.download = 'Apala_' + FINISH[finishKey].file + '.glb'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   }, err => console.error(err), {binary:true});
 };
 
