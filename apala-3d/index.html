@@ -27,6 +27,7 @@
   .sw button[aria-pressed="true"]{background:none;color:#fff}
   .sw button[aria-pressed="true"] i{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.22),inset 0 -3px 6px rgba(0,0,0,.35)}
   .hint{position:fixed;top:14px;right:16px;color:#fff;font-size:12px;text-align:right;text-shadow:0 1px 6px rgba(0,0,0,.35);max-width:240px}
+  .loading{position:fixed;inset:0;display:grid;place-items:center;color:#c9ccd1;font-size:14px;pointer-events:none}
   @media (max-width:600px){.hint{display:none}
     .sw{gap:6px}.sw button{width:38px;font-size:0;gap:0}.sw i{width:30px;height:30px}
     button,.sl{padding:8px 11px;font-size:12px}.bar{gap:6px;bottom:12px}}
@@ -39,7 +40,8 @@
 </head>
 <body>
 <canvas id="c"></canvas>
-<div class="title"><b>Blue Water Apala – <span id="fname">chrom</span></b><span>Model 3D wykonany na podstawie zdjęć produktu (proporcje przybliżone)</span></div>
+<div class="title"><b>Blue Water Apala – <span id="fname">chrom</span></b><span>Model 3D na podstawie geometrii producenta</span></div>
+<div id="loading" class="loading">Wczytywanie modelu…</div>
 <div class="hint">Przeciągnij – obrót · kółko – zoom<br>prawy przycisk – przesuwanie</div>
 <div class="bar">
   <div class="sw" id="swatches"></div>
@@ -60,6 +62,7 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFExporter} from 'three/addons/exporters/GLTFExporter.js';
+import {OBJLoader} from 'three/addons/loaders/OBJLoader.js';
 
 const canvas = document.getElementById('c');
 const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true, preserveDrawingBuffer:false});
@@ -94,8 +97,8 @@ function studio(){
 scene.environment = pmrem.fromScene(studio(), 0.02).texture;
 
 const camera = new THREE.PerspectiveCamera(32, 1, 0.5, 400);
-const TARGET = new THREE.Vector3(-5, 13, 0);
-camera.position.set(34, 26, 48);
+const TARGET = new THREE.Vector3(-8, 16, 0);
+camera.position.set(46, 34, 64);
 const controls = new OrbitControls(camera, canvas);
 controls.target.copy(TARGET);
 controls.enableDamping = true;
@@ -124,102 +127,42 @@ const chrome = new THREE.MeshStandardMaterial({color:0xffffff, metalness:1, roug
 const satin  = new THREE.MeshStandardMaterial({color:0xdfe1e4, metalness:1, roughness:0.28, envMapIntensity:1.0});
 const dark   = new THREE.MeshStandardMaterial({color:0x2a2c2f, metalness:0.2, roughness:0.55});
 
-// ---- pomocnicze ----
-const faucet = new THREE.Group();   // eksportowany do GLB
-scene.add(faucet);
-function mesh(geo, mat, parent){ const m = new THREE.Mesh(geo, mat); m.castShadow = true; parent.add(m); return m; }
-function cylX(r1, r2, len, x, y, mat, parent){            // walec wzdłuż osi X, r1 po stronie -X
-  const m = mesh(new THREE.CylinderGeometry(r1, r2, len, 64), mat, parent);
-  m.rotation.z = Math.PI/2; m.position.set(x, y, 0); return m;
-}
-function ring(R, t, x, y, mat, parent, axis='x'){
-  const m = mesh(new THREE.TorusGeometry(R, t, 16, 80), mat, parent);
-  if(axis==='x') m.rotation.y = Math.PI/2; else m.rotation.x = Math.PI/2;
-  m.position.set(x, y, 0); return m;
-}
+// ---- model producenta: apala.obj (metry, Y w górę), grupy base / spout / sleeve ----
+const gum = new THREE.MeshStandardMaterial({color:0x2f3032, metalness:0.1, roughness:0.65});   // wkładki perlatorów
+const MAT = {Chrome:chrome, Dark:dark, Gum:gum};
+const S = 100;                                     // metry → jednostki sceny (cm)
+const BODY_Y = 0.070;                              // oś korpusu (m)
+const faucet = new THREE.Group(); faucet.scale.setScalar(S); scene.add(faucet);   // eksportowany do GLB
+const swing = new THREE.Group(); faucet.add(swing);                               // wylewka – obrót wokół kolumny
+const SPOUT0 = -Math.PI/2;                         // pozycja wyjściowa: wylewka w lewo, jak na zdjęciu
+swing.rotation.y = SPOUT0;
+const capG = new THREE.Group(); capG.position.y = BODY_Y; faucet.add(capG);      // tuleja z rączką – obrót wokół osi korpusu
 
-// ---- stopa i kolumna ----
-const YB = 5.5;                                           // oś korpusu zaworowego
-mesh(new THREE.CylinderGeometry(2.0, 2.2, 0.5, 64), chrome, faucet).position.y = 0.25;
-ring(2.05, 0.1, 0, 0.52, satin, faucet, 'y');
-mesh(new THREE.CylinderGeometry(1.0, 1.55, 0.8, 64), chrome, faucet).position.y = 0.9;
-
-// ---- korpus zaworowy: poziomy walec ścięty płasko z obu stron ----
-const valve = new THREE.Group(); valve.position.y = YB; faucet.add(valve);
-const XL = -5.2, XS = -2.4, XC = 1.8, XR = 5.4, RB = 2.15, BEV = 0.1, GAP = 0.14;
-// segment walca z fazkami na wybranych końcach
-function segment(x0, x1, parent, b0 = BEV, b1 = BEV){
-  cylX(RB, RB, x1-x0-b0-b1, (x0+b0 + x1-b1)/2, 0, chrome, parent);
-  if(b0) cylX(RB-b0, RB, b0, x0+b0/2, 0, chrome, parent);
-  if(b1) cylX(RB, RB-b1, b1, x1-b1/2, 0, chrome, parent);
-}
-function face(x, s, parent){                                       // płaskie czoło
-  const f = mesh(new THREE.CircleGeometry(RB-BEV, 64), chrome, parent);
-  f.rotation.y = s*Math.PI/2; f.position.x = x; return f;
-}
-segment(XL, XC, valve);                                            // stała część korpusu (z krótkim kranikiem)
-face(XL, -1, valve);
-cylX(RB-0.3, RB-0.3, 0.6, XC + GAP/2, 0, dark, valve);              // dno szczeliny
-
-// ---- ruchoma tuleja z dużą rączką (obraca się wokół osi korpusu) ----
-const capG = new THREE.Group(); valve.add(capG);
-segment(XC + GAP, XR, capG);
-face(XR, 1, capG);
-// znaczniki na czole: "|" u góry i "–" z przodu
-const mk1 = mesh(new THREE.BoxGeometry(0.02, 0.32, 0.06), satin, capG); mk1.position.set(XR+0.005, 1.45, 0);
-const mk2 = mesh(new THREE.BoxGeometry(0.02, 0.06, 0.32), satin, capG); mk2.position.set(XR+0.005, -0.35, 1.4);
-const lever = new THREE.Group(); lever.position.x = 3.6; capG.add(lever);
-mesh(new THREE.CylinderGeometry(0.42, 0.46, 0.5, 32), chrome, lever).position.y = RB + 0.1;
-mesh(new THREE.CylinderGeometry(0.34, 0.4, 5.2, 32), chrome, lever).position.y = RB + 2.8;
-mesh(new THREE.SphereGeometry(0.34, 32, 16), chrome, lever).position.y = RB + 5.4;
-
-// ---- krótka dźwignia wody filtrowanej (lewa) ----
-const pin = new THREE.Group(); pin.position.x = -3.4; valve.add(pin);
-mesh(new THREE.CylinderGeometry(0.62, 0.7, 0.4, 48), satin, pin).position.y = 1.4;
-mesh(new THREE.CylinderGeometry(0.26, 0.3, 2.4, 32), chrome, pin).position.y = 2.7;
-mesh(new THREE.SphereGeometry(0.26, 32, 16), chrome, pin).position.y = 3.9;
-
-// ---- wylewka (obrotowa o 360°) ----
-const swing = new THREE.Group(); faucet.add(swing);
-const YT = 26.1, R = 4.5, k = 0.5523, XH = -9.5;                    // wysokość osi, promień łuku, początek głowicy
-const path = new THREE.CurvePath();
-path.add(new THREE.LineCurve3(new THREE.Vector3(0,0.6,0), new THREE.Vector3(0,YT-R,0)));
-path.add(new THREE.CubicBezierCurve3(
-  new THREE.Vector3(0,YT-R,0), new THREE.Vector3(0,YT-R+k*R,0),
-  new THREE.Vector3(-R+k*R,YT,0), new THREE.Vector3(-R,YT,0)));
-path.add(new THREE.LineCurve3(new THREE.Vector3(-R,YT,0), new THREE.Vector3(XH,YT,0)));
-mesh(new THREE.TubeGeometry(path, 260, 1.0, 48, false), chrome, swing);
-
-const XE = -17.3;                                                   // koniec głowicy
-cylX(1.2, 1.2, XH-XE, (XH+XE)/2, YT, chrome, swing);
-ring(1.2, 0.14, XH, YT, satin, swing);
-const cap = cylX(1.08, 1.2, 0.35, XE-0.1, YT, satin, swing);        // zaokrąglony czubek
-ring(1.17, 0.07, XE+0.08, YT, satin, swing);
-// perlatory pod głowicą: duży (przy końcu) i mały
-function aerator(x, r, len){
-  const g = new THREE.Group(); g.position.set(x, YT-1.2, 0); swing.add(g);
-  mesh(new THREE.CylinderGeometry(r, r*1.08, len, 48), chrome, g).position.y = -len/2;
-  const mesh_ = mesh(new THREE.CylinderGeometry(r*0.78, r*0.78, 0.06, 48), dark, g);
-  mesh_.position.y = -len - 0.02; mesh_.castShadow = false;
-  return g;
-}
-aerator(-15.2, 0.62, 0.8);
-aerator(-12.9, 0.38, 0.55);
-
-// ---- woda (opcjonalna) ----
+// ---- woda (opcjonalna) – z mniejszego perlatora, obraca się razem z wylewką ----
 const swc = document.createElement('canvas'); swc.width = 8; swc.height = 256;
 const sctx = swc.getContext('2d');
 for(let y=0;y<256;y++){ const a = 0.25 + Math.random()*0.65; sctx.fillStyle = `rgba(255,255,255,${a})`; sctx.fillRect(0,y,8,1); }
 const streamTex = new THREE.CanvasTexture(swc); streamTex.wrapT = THREE.RepeatWrapping; streamTex.repeat.set(1, 5);
+const AER_Y = 0.296, AER_Z = 0.189;
 const stream = new THREE.Mesh(
-  new THREE.CylinderGeometry(0.11, 0.09, YT-1.2-0.55-0.2, 16, 1, true),
+  new THREE.CylinderGeometry(0.0011, 0.0009, AER_Y - 0.002, 16, 1, true),
   new THREE.MeshBasicMaterial({color:0xd4ebff, map:streamTex, transparent:true, opacity:0.8, depthWrite:false, side:THREE.DoubleSide}));
-stream.position.set(-12.9, (YT-1.2-0.55-0.2)/2 + 0.1, 0); stream.visible = false;
-scene.add(stream);
-function followStream(){                                           // strumień podąża za obracaną wylewką
-  const a = swing.rotation.y, x = -12.9;
-  stream.position.x = x*Math.cos(a); stream.position.z = -x*Math.sin(a);
-}
+stream.position.set(0, AER_Y/2, AER_Z); stream.visible = false;
+swing.add(stream);
+
+const loading = document.getElementById('loading');
+new OBJLoader().load('apala.obj', root => {
+  root.traverse(o => {
+    if(!o.isMesh) return;
+    const [group, mat] = o.name.split('_');
+    o.material = MAT[mat] || chrome;
+    o.castShadow = true;
+    if(group === 'spout') swing.add(o.clone());
+    else if(group === 'sleeve'){ const m = o.clone(); m.position.y = -BODY_Y; capG.add(m); }
+    else faucet.add(o.clone());
+  });
+  loading.remove();
+}, undefined, err => { loading.textContent = 'Nie udało się wczytać modelu (apala.obj).'; console.error(err); });
 
 // ---- podłoże: cień + opcjonalny blat ----
 const shadowCatcher = new THREE.Mesh(new THREE.PlaneGeometry(240, 240), new THREE.ShadowMaterial({opacity:0.5}));
@@ -234,7 +177,7 @@ function toggle(btn, on){ btn.setAttribute('aria-pressed', on); }
 $('bAuto').onclick = e => { controls.autoRotate = !controls.autoRotate; toggle(e.currentTarget, controls.autoRotate); };
 $('bWater').onclick = e => { stream.visible = !stream.visible; toggle(e.currentTarget, stream.visible); };
 $('bSlab').onclick = e => { slab.visible = !slab.visible; shadowCatcher.visible = !slab.visible; toggle(e.currentTarget, slab.visible); };
-$('swing').oninput = e => { swing.rotation.y = THREE.MathUtils.degToRad(+e.target.value); $('swv').textContent = e.target.value + '°'; followStream(); };
+$('swing').oninput = e => { swing.rotation.y = SPOUT0 + THREE.MathUtils.degToRad(+e.target.value); $('swv').textContent = e.target.value + '°'; };
 // wykończenia z oferty bluewater.pl; [kolor, chropowatość, metaliczność] – odcienie przybliżone
 const FINISH = {
   chrome:{name:'chrom',              file:'chrom',     main:[0xffffff,0.05,1],   satin:[0xdfe1e4,0.28,1]},
@@ -266,7 +209,7 @@ setFinish('chrome');
 $('tilt').oninput = e => { capG.rotation.x = THREE.MathUtils.degToRad(+e.target.value); $('tlv').textContent = e.target.value + '°'; };
 controls.addEventListener('start', () => { controls.autoRotate = false; toggle($('bAuto'), false); });
 
-const VIEWS = {front:[0,15,62], back:[0,15,-62], right:[62,15,0], left:[-62,15,0], top:[0.01,95,0]};
+const VIEWS = {front:[-8,16,82], back:[-8,16,-82], right:[74,16,0], left:[-90,16,0], top:[-8,115,0.01]};
 let tween = null;
 document.querySelectorAll('[data-v]').forEach(b => b.onclick = () => {
   controls.autoRotate = false; toggle($('bAuto'), false);
@@ -275,11 +218,13 @@ document.querySelectorAll('[data-v]').forEach(b => b.onclick = () => {
 });
 
 $('bGlb').onclick = () => {
+  faucet.scale.setScalar(1);                                       // GLB w metrach
   new GLTFExporter().parse(faucet, buf => {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([buf], {type:'model/gltf-binary'}));
     a.download = 'Apala_' + FINISH[finishKey].file + '.glb'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   }, err => console.error(err), {binary:true});
+  faucet.scale.setScalar(S);
 };
 
 function resize(){
