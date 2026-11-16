@@ -6,5 +6,5 @@ Otwórz przez serwer WWW (np. GitHub Pages) – plik `index.html` wczytuje `apal
 
 - obrót myszą, zoom kółkiem, widoki Przód/Prawa/Tył/Lewa/Góra
 - 7 wykończeń z oferty: chrom, kolor złoty, kolor stali, grafit (Gun Metal), czarny mat, mosiądz antyczny, miedź
-- obrót wylewki o 360°, ruchoma tuleja z rączką mieszacza, strumień wody, opcjonalny blat
-- eksport do GLB (przycisk „Pobierz GLB”)
+- obrót wylewki o 360°, ruchoma tuleja z rączką mieszacza
+- marmurowy blat, grawerowane logo Blue Water na tulei
