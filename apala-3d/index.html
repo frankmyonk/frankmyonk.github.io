@@ -16,7 +16,7 @@
   button,.sl{font:600 13px/1 inherit;font-family:inherit;color:var(--ink);background:var(--glass);border:1px solid var(--line);
     border-radius:999px;padding:10px 14px;cursor:pointer;backdrop-filter:blur(8px)}
   button:hover{background:rgba(80,84,90,.9)}
-  button[aria-pressed="true"]{background:#e9ebee;color:#1d2024}
+  button[aria-pressed="true"]{background:#e9ebee;color:#1d2024;border-color:rgba(0,0,0,.35);box-shadow:0 1px 6px rgba(0,0,0,.35)}
   .sl{display:flex;gap:8px;align-items:center;cursor:default}
   .sl input{width:110px}
   .sw{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;width:100%;margin-bottom:4px}
@@ -52,7 +52,7 @@
   <button data-v="top">Góra</button>
   <button id="bAuto" aria-pressed="true">Auto-obrót</button>
   <button id="bWater" aria-pressed="false">Woda</button>
-  <button id="bSlab" aria-pressed="false">Blat</button>
+  <button id="bSlab" aria-pressed="true">Blat</button>
   <label class="sl">Wylewka <input id="swing" type="range" min="0" max="360" value="0"><span id="swv">0°</span></label>
   <label class="sl">Rączka <input id="tilt" type="range" min="-25" max="25" value="0"><span id="tlv">0°</span></label>
   <button id="bGlb">Pobierz GLB</button>
@@ -167,9 +167,40 @@ new OBJLoader().load('apala.obj', root => {
 // ---- podłoże: cień + opcjonalny blat ----
 const shadowCatcher = new THREE.Mesh(new THREE.PlaneGeometry(240, 240), new THREE.ShadowMaterial({opacity:0.5}));
 shadowCatcher.rotation.x = -Math.PI/2; shadowCatcher.receiveShadow = true; scene.add(shadowCatcher);
-const slab = new THREE.Mesh(new THREE.BoxGeometry(70, 3, 46),
-  new THREE.MeshStandardMaterial({color:0xe8e9eb, roughness:0.3, metalness:0, envMapIntensity:0.7}));
-slab.position.y = -1.5; slab.receiveShadow = true; slab.visible = false; scene.add(slab);
+// marmur: jasne tło, miękkie chmury i szare żyłki biegnące po skosie (generowane w canvasie)
+function marbleTexture(W, H){
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+  g.fillStyle = '#f2f1ee'; g.fillRect(0, 0, W, H);
+  for(let i = 0; i < 90; i++){                                    // delikatne chmury
+    const x = Math.random()*W, y = Math.random()*H, r = 60 + Math.random()*260;
+    const gr = g.createRadialGradient(x, y, 0, x, y, r);
+    const tone = Math.random() < 0.5 ? '196,193,188' : '226,223,217';
+    gr.addColorStop(0, `rgba(${tone},0.12)`); gr.addColorStop(1, `rgba(${tone},0)`);
+    g.fillStyle = gr; g.fillRect(x-r, y-r, 2*r, 2*r);
+  }
+  g.save(); g.translate(W/2, H/2); g.rotate(-0.55); g.translate(-W, -H);
+  const vein = (width, alpha, color, steps) => {                  // żyłka = błądzenie losowe
+    let x = Math.random()*W*2, y = Math.random()*H*0.3, ang = Math.PI/2 + (Math.random()-.5)*0.5;
+    g.beginPath(); g.moveTo(x, y);
+    for(let k = 0; k < steps; k++){ ang += (Math.random()-.5)*0.32; x += Math.cos(ang)*10; y += Math.sin(ang)*10; g.lineTo(x, y); }
+    g.globalAlpha = alpha; g.strokeStyle = color; g.lineWidth = width; g.stroke(); g.globalAlpha = 1;
+  };
+  g.filter = 'blur(6px)';   for(let i = 0; i < 6;  i++) vein(12 + Math.random()*14, 0.20, '#8c867d', 260);
+  g.filter = 'blur(1.5px)'; for(let i = 0; i < 9;  i++) vein(2.5 + Math.random()*3,  0.65, '#77716a', 240);
+  g.filter = 'blur(0.4px)'; for(let i = 0; i < 18; i++) vein(0.8 + Math.random()*1.2, 0.60, '#8b857c', 160);
+  g.restore(); g.filter = 'none';
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+}
+const SW = 120, SD = 64, SH = 3;                                  // blat: szer. × głęb. × grubość (cm)
+const marbleTop = marbleTexture(2048, Math.round(2048*SD/SW));
+const marbleSide = marbleTop.clone(); marbleSide.wrapS = marbleSide.wrapT = THREE.RepeatWrapping; marbleSide.repeat.set(1, SH/SD);
+const marbleProps = {color:0xd9d7d3, roughness:0.18, metalness:0, clearcoat:0.5, clearcoatRoughness:0.15, envMapIntensity:0.45};
+const topMat  = new THREE.MeshPhysicalMaterial({map:marbleTop,  ...marbleProps});
+const sideMat = new THREE.MeshPhysicalMaterial({map:marbleSide, ...marbleProps});
+const slab = new THREE.Mesh(new THREE.BoxGeometry(SW, SH, SD), [sideMat, sideMat, topMat, sideMat, sideMat, sideMat]);
+slab.position.set(-8, -SH/2, 14);                                 // bateria bliżej tylnej krawędzi
+slab.receiveShadow = true; scene.add(slab);
+shadowCatcher.visible = false;
 
 // ---- UI ----
 const $ = id => document.getElementById(id);
