@@ -156,9 +156,9 @@ const LOGO_D = "M94.86,548.0504c-6.3046-9.5657-17.7787-34.2288-17.7787-62.8132 c
 const FACE_X = 0.0834, FACE_R = 0.0232;            // płaskie czoło tulei (m), oś korpusu = środek capG
 function logoTexture(){
   const N = 1024, c = document.createElement('canvas'); c.width = c.height = N; const g = c.getContext('2d');
-  const W = 0.0135;                                // szerokość logo na czole (m)
+  const W = 0.0152;                                // szerokość logo na czole (m)
   const k = (W / (2*FACE_R)) * N / 923;            // 923 = szerokość logo w jednostkach SVG
-  g.translate(N/2, N/2 + 0.0016/(2*FACE_R)*N);     // lekko poniżej środka, jak na zdjęciu
+  g.translate(N/2, N/2);                           // dokładnie na środku czoła
   g.scale(k, k); g.translate(-538, -438);          // środek logo w SVG
   g.fillStyle = '#fff'; g.fill(new Path2D(LOGO_D));
   const t = new THREE.CanvasTexture(c); t.anisotropy = 8; return t;
@@ -172,8 +172,8 @@ function tick(color, w, h, u, v, angle = 0){
     new THREE.MeshStandardMaterial({color, roughness:0.4, metalness:0.2, polygonOffset:true, polygonOffsetFactor:-2}));
   m.rotation.set(0, Math.PI/2, 0); m.rotateZ(angle); m.position.set(FACE_X, v, -u); capG.add(m);
 }
-tick(0x2f6fd6, 0.0005, 0.0032, 0.0065, 0.0185, -0.25);  // niebieski "|" u góry – zimna
-tick(0xc8323c, 0.0045, 0.0005, -0.0165, -0.001);         // czerwony "–" z boku – ciepła
+tick(0x3f6fd0, 0.00045, 0.0033, 0, 0.0194);      // niebieski "|" dokładnie u góry – zimna
+tick(0xd0444a, 0.0048, 0.00045, -0.0167, 0);    // czerwony "–" po lewej, na wysokości środka – ciepła
 function engraveFor(key){                          // grawer = zmatowiony metal; na czarnym macie laser odsłania jasny metal
   if(key === 'black'){ engr.color.setHex(0x9c9a96); engr.metalness = 0.8; engr.roughness = 0.45; }
   else { engr.color.copy(chrome.color).multiplyScalar(0.72); engr.metalness = 0.85; engr.roughness = 0.6; }
